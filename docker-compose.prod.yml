@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: rayanweb-app
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    env_file:
+      - .env.production
+    environment:
+      # Override the DATABASE_URL to use the postgres container
+      - DATABASE_URL=postgresql://rayan:rayan_secure_password@db:5432/rayanweb?schema=public
+
+  db:
+    image: postgres:15-alpine
+    container_name: rayanweb-db
+    restart: always
+    environment:
+      - POSTGRES_USER=rayan
+      - POSTGRES_PASSWORD=rayan_secure_password
+      - POSTGRES_DB=rayanweb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
