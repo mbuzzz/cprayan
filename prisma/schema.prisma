@@ -1,0 +1,258 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          String    @default("CUSTOMER") // Use String instead of Enum for SQLite
+  accounts      Account[]
+  sessions      Session[]
+  orders        Order[]
+  reviews       Review[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Project {
+  id          String  @id @default(cuid())
+  title       String
+  slug        String  @unique
+  description String
+  content     String?
+  featured    Boolean @default(false)
+  published   Boolean @default(true)
+
+  techStack   String @default("[]") // JSON stringified array
+  screenshots String @default("[]") // JSON stringified array
+
+  demoLinks DemoLink[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DemoLink {
+  id        String  @id @default(cuid())
+  projectId String
+  label     String // e.g., "Live Demo", "Video Preview", "Source Code"
+  url       String // e.g., "https://demo.rayanweb.id", "https://youtube.com/..."
+  type      String  @default("URL") // "URL", "EMBED", "VIDEO"
+  embedUrl  String? // Optional embed URL for iframe
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Product {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  description String
+  content     String?
+  price       Float     @default(0)
+  version     String?
+  releaseDate DateTime?
+  filePath    String?
+  featured    Boolean   @default(false)
+  published   Boolean   @default(true)
+
+  screenshots String  @default("[]") // JSON stringified array
+  demoLinks   String? @default("[]") // JSON stringified array
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  reviews    Review[]
+  orderItems OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  products    Product[]
+}
+
+model Review {
+  id      String  @id @default(cuid())
+  rating  Int
+  comment String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
+
+model Order {
+  id              String @id @default(cuid())
+  orderNumber     String @unique
+  referenceNumber String @unique
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  customerName  String
+  customerEmail String
+  customerPhone String
+
+  subtotal Float
+  tax      Float
+  total    Float
+
+  paymentMethod   String   @default("manual_whatsapp")
+  paymentStatus   String   @default("PENDING")
+  orderStatus     String   @default("PENDING")
+  paymentDeadline DateTime
+
+  items         OrderItem[]
+  verifications PaymentVerification[]
+  reminders     PaymentReminder[]
+
+  firstContactAt DateTime?
+  lastContactAt  DateTime?
+  whatsappCount  Int       @default(0)
+  expiredAt      DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderItem {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  productName  String
+  productPrice Float
+  quantity     Int
+  subtotal     Float
+
+  downloadToken     String?   @unique
+  downloadExpiresAt DateTime?
+  downloadCount     Int       @default(0)
+}
+
+model PaymentVerification {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  adminId String? // The user who verified
+
+  amountReceived   Float
+  paymentMethod    String
+  paymentReference String?
+  proofDocument    String?
+  notes            String?
+  status           String  @default("verified")
+
+  verifiedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+}
+
+model PaymentReminder {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  type          String // "whatsapp", "email", "both"
+  attemptNumber Int
+  status        String // "pending", "sent", "failed"
+  errorMessage  String?
+
+  sentAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+// --- CMS MODELS ---
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g., "site_name", "hero_title", "contact_email"
+  value     String   // Can be plain string or JSON stringified for complex objects
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TeamMember {
+  id          String   @id @default(cuid())
+  name        String
+  role        String
+  description String?
+  photo       String?
+  order       Int      @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  icon        String?
+  features    String   @default("[]") // JSON stringified array of features
+  order       Int      @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

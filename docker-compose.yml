@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: rayanweb-app
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount the sqlite database file so data persists across container restarts
+      - ./prisma/dev.db:/app/prisma/dev.db
+    env_file:
+      - .env.production
