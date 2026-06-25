@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ShoppingCart, Star, Check, Calendar, Tag, RefreshCw, FileCode, MonitorPlay, ChevronRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import AddToCartButton from "@/components/AddToCartButton";
 
 export const revalidate = 0;
 
@@ -26,6 +27,11 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
 
   const mainImage = screenshots[0] || "/asset/logorayan.png";
   const liveDemoLink = demoLinks.length > 0 ? demoLinks[0].url : "#";
+  
+  const productForCart = {
+    ...product,
+    image: mainImage
+  };
 
   return (
     <div className="bg-background min-h-screen pb-20 transition-colors duration-300">
@@ -146,9 +152,8 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
                 </div>
               </div>
               
-              <button className="btn-secondary w-full py-3 mb-3 flex items-center justify-center gap-2">
-                <ShoppingCart className="w-5 h-5" /> Add to Cart
-              </button>
+              <AddToCartButton product={productForCart} />
+              
               <Link href={`/checkout?product=${product.id}`} className="btn-primary w-full py-3 text-center block">
                 Buy Now
               </Link>

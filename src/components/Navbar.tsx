@@ -2,14 +2,21 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X, ShoppingCart, LogIn, UserCircle } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { ThemeToggle } from "./ThemeToggle";
+import { useCart } from "./CartContext";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { data: session } = useSession();
+  const { itemCount } = useCart();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -63,7 +70,7 @@ export default function Navbar() {
                     <Link href={(session.user as any)?.role === 'ADMIN' ? '/admin' : '/dashboard'} className="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-all">
                       <UserCircle className="w-5 h-5 text-primary" /> {session.user?.name || "Dashboard"}
                     </Link>
-                    <button onClick={() => signOut()} className="text-xs text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium">Logout</button>
+                    <button onClick={() => signOut({ callbackUrl: '/' })} className="text-xs text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium">Logout</button>
                   </div>
                 ) : (
                   <Link href="/login" className="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-all">
@@ -72,7 +79,7 @@ export default function Navbar() {
                 )}
                 
                 <Link href="/cart" className="btn-primary text-sm px-5 py-2.5 flex items-center gap-2">
-                  <ShoppingCart className="w-4 h-4" /> (0)
+                  <ShoppingCart className="w-4 h-4" /> ({mounted ? itemCount : 0})
                 </Link>
               </div>
             </div>
@@ -116,7 +123,7 @@ export default function Navbar() {
                       <UserCircle className="w-5 h-5" /> Dashboard
                    </Link>
                    <button
-                      onClick={() => { signOut(); setIsOpen(false); }}
+                      onClick={() => { signOut({ callbackUrl: '/' }); setIsOpen(false); }}
                       className="flex w-full items-center gap-3 text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-500/10 px-4 py-3 rounded-[12px] text-base font-medium transition-all"
                     >
                       Logout
@@ -137,7 +144,7 @@ export default function Navbar() {
                 className="flex items-center gap-3 text-black bg-primary px-4 py-3 rounded-[12px] text-base font-bold transition-all shadow-[0_0_15px_rgba(198,161,91,0.3)]"
                 onClick={() => setIsOpen(false)}
               >
-                <ShoppingCart className="w-5 h-5" /> Keranjang (0)
+                <ShoppingCart className="w-5 h-5" /> Keranjang ({mounted ? itemCount : 0})
               </Link>
             </div>
           </div>

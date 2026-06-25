@@ -3,6 +3,7 @@ import { Inter, Oswald } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { CartProvider } from "@/components/CartContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -31,7 +32,9 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <AuthProvider>
-            {children}
+            <CartProvider>
+              {children}
+            </CartProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>
