@@ -7,18 +7,20 @@ async function main() {
   console.log('Start seeding...');
 
   // 1. Create Admin User
-  const adminPassword = await bcrypt.hash('admin123', 10);
+  const adminPassword = await bcrypt.hash('@r4y4N.W3b', 10);
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@rayanweb.id' },
-    update: {},
+    where: { email: 'admin@rayan.web.id' },
+    update: {
+      password: adminPassword,
+    },
     create: {
-      email: 'admin@rayanweb.id',
+      email: 'admin@rayan.web.id',
       name: 'Admin Rayan',
       password: adminPassword,
       role: 'ADMIN',
     },
   });
-  console.log(`Created admin user: ${admin.email}`);
+  console.log(`Created/Updated admin user: ${admin.email}`);
 
   // 2. Create Categories
   const categories = [
