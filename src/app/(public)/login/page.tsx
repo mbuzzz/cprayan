@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Mail, Lock, LogIn } from "lucide-react";
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
@@ -29,7 +29,12 @@ export default function LoginPage() {
       if (res?.error) {
         setError("Email atau password salah");
       } else {
-        router.push("/dashboard");
+        const session = await getSession();
+        if (session?.user && (session.user as any).role === "ADMIN") {
+          router.push("/admin");
+        } else {
+          router.push("/dashboard");
+        }
         router.refresh();
       }
     } catch (err) {
