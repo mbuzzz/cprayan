@@ -15,6 +15,8 @@ const oswald = Oswald({
   subsets: ["latin"],
 });
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "PT. Rayan Smart Kreatif | Solusi Digital Cerdas untuk Bisnis Anda",
   description: "Premium Digital Agency & Marketplace",
