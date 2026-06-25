@@ -4,6 +4,7 @@ import { ShoppingCart, Star, Check, Calendar, Tag, RefreshCw, FileCode, MonitorP
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import AddToCartButton from "@/components/AddToCartButton";
+import ProductTabs from "@/components/ProductTabs";
 
 export const revalidate = 0;
 
@@ -12,7 +13,14 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
 
   const product = await prisma.product.findUnique({
     where: { slug, published: true },
-    include: { category: true }
+    include: { 
+      category: true,
+      reviews: {
+        include: { user: { select: { name: true } } },
+        orderBy: { createdAt: 'desc' }
+      },
+      _count: { select: { orderItems: true } }
+    }
   });
 
   if (!product) notFound();
@@ -33,6 +41,11 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
     image: mainImage
   };
 
+  // Calculate average rating
+  const avgRating = product.reviews.length > 0 
+    ? product.reviews.reduce((acc, r) => acc + r.rating, 0) / product.reviews.length 
+    : 5.0;
+
   return (
     <div className="bg-background min-h-screen pb-20 transition-colors duration-300">
       {/* Product Header */}
@@ -51,15 +64,15 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
           <div className="flex flex-wrap items-center gap-6 text-sm">
             <div className="flex items-center gap-2">
               <div className="flex">
-                {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 text-primary fill-primary" />)}
+                {[1,2,3,4,5].map(i => <Star key={i} className={`w-4 h-4 ${avgRating >= i ? 'text-primary fill-primary' : 'text-muted'}`} />)}
               </div>
-              <span className="text-foreground font-bold">5.0</span>
-              <span className="text-muted">(12 reviews)</span>
+              <span className="text-foreground font-bold">{avgRating.toFixed(1)}</span>
+              <span className="text-muted">({product.reviews.length} reviews)</span>
             </div>
             
             <div className="flex items-center gap-2 border-l border-border pl-6">
               <ShoppingCart className="w-4 h-4 text-muted" />
-              <span className="text-foreground font-medium">{product.id.substring(0, 3).replace(/\D/g, '') || "42"} Sales</span>
+              <span className="text-foreground font-medium">{product._count.orderItems || "0"} Sales</span>
             </div>
           </div>
         </div>
@@ -88,44 +101,8 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
               </div>
             </div>
 
-            {/* Tabs */}
-            <div className="flex border-b border-border mb-8 overflow-x-auto">
-              <button className="px-6 py-4 text-primary border-b-2 border-primary font-bold whitespace-nowrap">Item Details</button>
-              <button className="px-6 py-4 text-muted hover:text-foreground transition-colors whitespace-nowrap">Reviews (12)</button>
-              <button className="px-6 py-4 text-muted hover:text-foreground transition-colors whitespace-nowrap">Comments</button>
-            </div>
-
-            {/* Description */}
-            <div className="prose prose-invert max-w-none mb-12">
-              <div className="bg-card border border-border rounded-lg p-8 custom-shadow transition-colors duration-300">
-                <h3 className="text-xl font-bold mb-4 text-foreground">Deskripsi Produk</h3>
-                <p className="text-muted leading-relaxed whitespace-pre-line mb-6">
-                  {product.description}
-                </p>
-                {product.content && (
-                  <div dangerouslySetInnerHTML={{ __html: product.content }} className="text-muted leading-relaxed mt-4" />
-                )}
-
-                <h4 className="text-lg font-bold mt-8 mb-4 text-foreground">Fitur Utama</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                  {["Clean Code & Well Documented", "Responsive Design", "Easy to Customize", "Free Lifetime Updates"].map((feature, i) => (
-                    <div key={i} className="flex items-start gap-3">
-                      <div className="mt-1 w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Check className="w-3 h-3 text-primary" />
-                      </div>
-                      <span className="text-muted">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <h4 className="text-lg font-bold mt-8 mb-4 text-foreground">Apa yang Anda Dapatkan?</h4>
-                <div className="space-y-3 bg-background p-6 rounded-lg border border-border">
-                  <div className="flex items-center gap-3 text-muted"><FileCode className="w-5 h-5 text-primary" /> Full Source Code (.zip)</div>
-                  <div className="flex items-center gap-3 text-muted"><FileCode className="w-5 h-5 text-primary" /> Database SQL</div>
-                  <div className="flex items-center gap-3 text-muted"><FileCode className="w-5 h-5 text-primary" /> Dokumentasi Lengkap (PDF/HTML)</div>
-                </div>
-              </div>
-            </div>
+            {/* Tabs & Description handled by Client Component */}
+            <ProductTabs product={product} reviews={product.reviews} />
           </div>
 
           {/* Sidebar */}

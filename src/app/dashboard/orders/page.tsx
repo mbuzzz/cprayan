@@ -100,9 +100,9 @@ export default async function DashboardOrdersPage() {
                     </td>
                     <td className="p-4 pr-6 text-right">
                       {order.orderStatus === 'COMPLETED' ? (
-                        <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-[#b08d4b] text-xs font-bold transition-all shadow-sm">
+                        <Link href={`/api/download/${order.items[0]?.downloadToken}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-[#b08d4b] text-xs font-bold transition-all shadow-sm">
                           <Download className="w-3.5 h-3.5" /> Unduh
-                        </button>
+                        </Link>
                       ) : order.orderStatus === 'PENDING' ? (
                         <Link href={`/checkout/manual-payment?orderId=${order.id}&ref=${order.referenceNumber}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-background border border-border hover:border-primary hover:text-primary text-foreground text-xs font-bold transition-all">
                           <ExternalLink className="w-3.5 h-3.5" /> Bayar

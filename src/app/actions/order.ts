@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import crypto from "crypto";
 
 export async function createDirectOrder(productId: string, customerData: { name: string, email: string, phone: string }) {
   try {
@@ -12,6 +13,9 @@ export async function createDirectOrder(productId: string, customerData: { name:
     const referenceNumber = `REF-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
     const tax = product.price * 0.11; // 11% PPN
     const total = product.price + tax;
+    
+    // Generate secure download token
+    const downloadToken = crypto.randomBytes(32).toString('hex');
 
     const order = await prisma.order.create({
       data: {
@@ -32,7 +36,8 @@ export async function createDirectOrder(productId: string, customerData: { name:
             productName: product.title,
             productPrice: product.price,
             quantity: 1,
-            subtotal: product.price
+            subtotal: product.price,
+            downloadToken: downloadToken
           }]
         }
       }
