@@ -185,7 +185,33 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 3. FEATURED PRODUCTS (MARKETPLACE) */}
+      {/* 3. SERVICES / WHY CHOOSE US */}
+      <section className="py-24 relative bg-card">
+        <div className="glow-blob bg-primary/5 w-[800px] h-[800px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center mb-16 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight text-foreground">LAYANAN <span className="golden-text">KAMI</span></h2>
+            <p className="text-muted text-lg leading-relaxed">Selain menyediakan produk digital siap pakai, kami juga melayani pengembangan sistem kustom (Bespoke) yang disesuaikan dengan kebutuhan unik proses bisnis Anda.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {services.map((service, i) => (
+              <div key={i} className="bg-background p-8 card-hover text-center relative group custom-shadow">
+                <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
+                
+                <div className="w-16 h-16 mx-auto mb-6 rounded-[12px] border border-primary/20 flex items-center justify-center text-primary bg-card shadow-sm group-hover:shadow-[0_0_20px_rgba(198,161,91,0.2)] dark:group-hover:shadow-[0_0_20px_rgba(198,161,91,0.4)] transition-all duration-300 group-hover:-translate-y-2 relative z-10">
+                  {service.icon && iconMap[service.icon] ? iconMap[service.icon] : <Code className="w-7 h-7" />}
+                </div>
+                
+                <h3 className="text-xl font-bold mb-3 relative z-10 text-foreground">{service.title}</h3>
+                <p className="text-muted text-sm relative z-10 leading-relaxed">{service.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 4. FEATURED PRODUCTS (MARKETPLACE) */}
       <section className="py-24 relative">
         <div className="glow-blob bg-primary/5 w-[600px] h-[600px] top-1/2 left-0 -translate-x-1/2"></div>
         <div className="container mx-auto px-4 relative z-10">
@@ -235,32 +261,6 @@ export default async function Home() {
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 4. SERVICES / WHY CHOOSE US */}
-      <section className="py-24 relative bg-card">
-        <div className="glow-blob bg-primary/5 w-[800px] h-[800px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-16 max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight text-foreground">LAYANAN <span className="golden-text">KAMI</span></h2>
-            <p className="text-muted text-lg leading-relaxed">Selain menyediakan produk digital siap pakai, kami juga melayani pengembangan sistem kustom (Bespoke) yang disesuaikan dengan kebutuhan unik proses bisnis Anda.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {services.map((service, i) => (
-              <div key={i} className="bg-background p-8 card-hover text-center relative group custom-shadow">
-                <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
-                
-                <div className="w-16 h-16 mx-auto mb-6 rounded-[12px] border border-primary/20 flex items-center justify-center text-primary bg-card shadow-sm group-hover:shadow-[0_0_20px_rgba(198,161,91,0.2)] dark:group-hover:shadow-[0_0_20px_rgba(198,161,91,0.4)] transition-all duration-300 group-hover:-translate-y-2 relative z-10">
-                  {service.icon && iconMap[service.icon] ? iconMap[service.icon] : <Code className="w-7 h-7" />}
-                </div>
-                
-                <h3 className="text-xl font-bold mb-3 relative z-10 text-foreground">{service.title}</h3>
-                <p className="text-muted text-sm relative z-10 leading-relaxed">{service.description}</p>
               </div>
             ))}
           </div>
