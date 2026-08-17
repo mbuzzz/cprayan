@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Dirgahayu Republik Indonesia — Indonesia Emas",
   description:
-    "Ucapan HUT RI ke-81 dalam terminal Python interaktif Indonesia Emas. Kritik, refleksi, dan harapan untuk Republik Indonesia.",
+    "Dirgahayu Republik Indonesia. 81 tahun merdeka, tetapi masih banyak service publik berstatus TODO. Indonesia Emas bukan slogan kosong: kritik() adalah health_check(), dan perubahan bukan sekadar commit message.",
   keywords: [
     "HUT RI 81",
     "Dirgahayu Republik Indonesia",
@@ -24,19 +24,19 @@ export const metadata: Metadata = {
     siteName: "Indonesia Emas",
     title: "Dirgahayu Republik Indonesia — Indonesia Emas",
     description:
-      "Terminal Python interaktif untuk merayakan HUT RI ke-81: kritik() == health_check().",
+      "Dirgahayu Republik Indonesia. 81 tahun merdeka, tetapi masih banyak service publik berstatus TODO. kritik() adalah health_check().",
     images: [{
-      url: "/hutri81-icon.svg",
-      width: 64,
-      height: 64,
-      alt: "Indonesia Emas — Dirgahayu Republik Indonesia",
+      url: "/hutri81-share.png",
+      width: 1200,
+      height: 630,
+      alt: "Dirgahayu Republik Indonesia — Indonesia Emas — HUT RI ke-81",
     }],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Dirgahayu Republik Indonesia — Indonesia Emas",
-    description: "HUT RI ke-81 dalam format terminal Python interaktif.",
-    images: ["/hutri81-icon.svg"],
+    description: "Dirgahayu Republik Indonesia. 81 tahun merdeka, tetapi masih banyak service publik berstatus TODO.",
+    images: ["/hutri81-share.png"],
   },
   robots: { index: true, follow: true },
 };
