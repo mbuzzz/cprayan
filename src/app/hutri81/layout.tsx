@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Indonesia Emas" }],
   creator: "Indonesia Emas",
+  applicationName: "Indonesia Emas — HUT RI 81",
   metadataBase: new URL("https://gumpla.web.id"),
   alternates: { canonical: "/hutri81" },
   icons: { icon: "/hutri81-icon.svg", shortcut: "/hutri81-icon.svg" },
@@ -24,11 +25,18 @@ export const metadata: Metadata = {
     title: "Dirgahayu Republik Indonesia — Indonesia Emas",
     description:
       "Terminal Python interaktif untuk merayakan HUT RI ke-81: kritik() == health_check().",
+    images: [{
+      url: "/hutri81-icon.svg",
+      width: 64,
+      height: 64,
+      alt: "Indonesia Emas — Dirgahayu Republik Indonesia",
+    }],
   },
   twitter: {
     card: "summary",
     title: "Dirgahayu Republik Indonesia — Indonesia Emas",
     description: "HUT RI ke-81 dalam format terminal Python interaktif.",
+    images: ["/hutri81-icon.svg"],
   },
   robots: { index: true, follow: true },
 };
