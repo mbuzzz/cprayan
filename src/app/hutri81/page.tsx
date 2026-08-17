@@ -131,6 +131,7 @@ export default function Hutri81Page() {
   const [history, setHistory] = useState<string[]>([]);
   const [complaint, setComplaint] = useState("");
   const [complaints, setComplaints] = useState<string[]>([]);
+  const [visibleComplaints, setVisibleComplaints] = useState(12);
   const booted = typed >= bootLines.length;
   const progress = useMemo(() => Math.min(100, Math.round((typed / bootLines.length) * 100)), [typed]);
 
@@ -150,14 +151,14 @@ export default function Hutri81Page() {
     const shared = new URLSearchParams(window.location.search).get("keluh");
     const initial = saved ? JSON.parse(saved) as string[] : [];
     if (shared && !initial.includes(shared)) initial.unshift(shared);
-    setComplaints(initial.slice(0, 20));
+    setComplaints(initial.slice(0, 100));
   }, []);
 
   function submitComplaint(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const value = complaint.trim();
     if (!value) return;
-    const next = [value, ...complaints.filter((item) => item !== value)].slice(0, 20);
+    const next = [value, ...complaints.filter((item) => item !== value)].slice(0, 100);
     setComplaints(next);
     window.localStorage.setItem("hutri81-complaints", JSON.stringify(next));
     window.history.replaceState({}, "", `${window.location.pathname}?keluh=${encodeURIComponent(value)}`);
@@ -191,7 +192,7 @@ export default function Hutri81Page() {
           {booted && <div className="hero-copy"><div className="flag-mark"><span /><span /></div><p className="eyebrow">const HUT_RI = new Date("1945-08-17");</p><h1>print(<br /><em>"Dirgahayu Republik Indonesia"</em>)</h1><p className="hero-message"># TODO: fix_all_bugs_before_production();<br /># kritik() == health_check();</p><div className="hero-command"><span className="prompt">root@nusantara:~#</span> raise SystemExit("CHANGE_REQUIRED") <b>// exit_code: 2026</b></div></div>}
           <div className="command-history" aria-live="polite">{history.map((line, index) => <div key={`${line}-${index}`} className={line.startsWith("[CRIT]") ? "crit-line" : line.startsWith("[WARN]") ? "warn-line" : line.startsWith("[ OK ]") ? "ok-line" : "history-line"}>{line || "\u00a0"}</div>)}</div>
           <form className="command-form" onSubmit={runCommand}><span className="prompt">user@nusantara:~$</span><input value={command} onChange={(event) => setCommand(event.target.value)} aria-label="Terminal command" placeholder={booted ? "type 'help' for commands" : "booting..."} disabled={!booted} autoComplete="off" /><span className="cursor" aria-hidden="true" /></form>
-          <section className="complaint-box" aria-label="Keluh kesah masyarakat"><div className="complaint-title">// public_input::<span>keluh_kesah</span>()</div><form onSubmit={submitComplaint}><textarea value={complaint} onChange={(event) => setComplaint(event.target.value)} maxLength={280} placeholder="// tulis keluh kesah masyarakat..." aria-label="Keluh kesah masyarakat" /><div className="complaint-actions"><small>{complaint.length}/280 :: storage=localStorage</small><button type="submit">submit()</button><button type="button" onClick={shareComplaints}>share()</button></div></form>{complaints.length > 0 && <div className="complaint-list">{complaints.map((item, index) => <div className="complaint-item" key={`${item}-${index}`}><span className="prompt">[{String(index + 1).padStart(2, "0")}]</span> {item}</div>)}</div>}</section>
+          <section className="complaint-box" aria-label="Keluh kesah masyarakat"><div className="complaint-title">// public_input::<span>keluh_kesah</span>()</div><form onSubmit={submitComplaint}><textarea value={complaint} onChange={(event) => setComplaint(event.target.value)} maxLength={280} placeholder="// tulis keluh kesah masyarakat..." aria-label="Keluh kesah masyarakat" /><div className="complaint-actions"><small>{complaint.length}/280 :: storage=localStorage</small><button type="submit">submit()</button><button type="button" onClick={shareComplaints}>share()</button></div></form>{complaints.length > 0 && <div className="complaint-list">{complaints.slice(0, visibleComplaints).map((item, index) => <div className="complaint-item" key={`${item}-${index}`}><span className="bullet" aria-hidden="true">•</span>{item}</div>)}{complaints.length > visibleComplaints && <button className="complaint-next" type="button" onClick={() => setVisibleComplaints((count) => count + 12)}>next()</button>}</div>}</section>
         </div><aside className="system-panel"><div className="panel-heading">class IndonesiaEmas(Beta):</div><dl><div><dt>country</dt><dd>"ID"</dd></div><div><dt>version</dt><dd>81.0.0</dd></div><div><dt>status</dt><dd className="red-value">BUGGY</dd></div><div><dt>stability</dt><dd className="red-value">0.42</dd></div><div><dt>uptime</dt><dd>81 * YEAR</dd></div><div><dt>root_access</dt><dd>False</dd></div></dl><div className="panel-heading commit-heading">git log --oneline</div><ul className="commit-list"><li>Pendidikan.service <b>// FILE_NOT_FOUND</b></li><li>desain.md <b>// NOT_RESPONSIVE</b></li><li>masalah_2026.log <b>// UNRESOLVED</b></li><li>makar.exception <b>// DETECTED</b></li><li>korupsi.vulnerability <b>// CRITICAL</b></li><li>dinasti.patch <b>// MERGE_CONFLICT</b></li><li>MBG.targeting_bug <b>// MISDIRECTED</b></li><li>KDKMP.anomaly <b>// DETECTED</b></li></ul><div className="ascii-flag"><span /><span /></div><p className="panel-note"># kritik = health_check()<br /># TODO: ship_change()</p></aside></div></div>
         <footer className="terminal-footer"><span>PID=1945</span><span>encoding="UTF-8"</span><span>env="BETA"</span><span>© NUSANTARA_OS</span></footer>
       </section><p className="mobile-hint">$ type <b>help</b> | <b>scan</b> | <b>status</b> | <b>rm -rf 02</b></p>
