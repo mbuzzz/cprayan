@@ -125,10 +125,6 @@ export default function Hutri81Page() {
   }, []);
 
   useEffect(() => {
-    document.title = "IndonesiaEmas_Beta.py :: HUTRI_81";
-  }, []);
-
-  useEffect(() => {
     const saved = window.localStorage.getItem("hutri81-complaints");
     const shared = new URLSearchParams(window.location.search).get("keluh");
     const initial = saved ? JSON.parse(saved) as string[] : [];

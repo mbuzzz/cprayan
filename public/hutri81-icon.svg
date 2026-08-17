@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="12" fill="#080a08"/>
+  <path d="M8 8h48v24H8z" fill="#d92323"/>
+  <path d="M8 32h48v24H8z" fill="#f4f1e8"/>
+  <text x="32" y="38" text-anchor="middle" font-family="monospace" font-size="17" font-weight="700" fill="#080a08">IE</text>
+  <path d="M8 32h48" stroke="#080a08" stroke-width="2"/>
+</svg>
