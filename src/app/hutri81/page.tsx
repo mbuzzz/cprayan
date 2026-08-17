@@ -106,10 +106,10 @@ export default function Hutri81Page() {
   const progress = useMemo(() => Math.min(100, Math.round((typed / bootLines.length) * 100)), [typed]);
 
   useEffect(() => {
-    const timer = window.setInterval(() => setTyped((value) => {
-      if (value >= bootLines.length) { window.clearInterval(timer); return value; }
-      return value + 1;
-    }), 150);
+    // Boot animation is fully client-side: no model/provider request is involved.
+    const timer = window.setInterval(() => setTyped((value) => (
+      value >= bootLines.length ? 0 : value + 1
+    )), 150);
     return () => window.clearInterval(timer);
   }, []);
 
