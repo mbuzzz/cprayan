@@ -18,6 +18,8 @@ const bootLines = [
   "[CRIT] korupsi.vulnerability: SecurityRisk",
   "[WARN] dinasti.patch: MergeConflict",
   "[WARN] MBG.targeting_bug: TargetMismatch",
+  "[WARN] rupiah.exchange_rate: CurrencyPressureWarning",
+  "[WARN] daya_beli: PurchasingPowerError",
   "[ OK ] critical_thinking.module",
 ];
 
@@ -82,6 +84,8 @@ function commandOutput(command: string): string[] {
     "        'korupsi.vulnerability': SecurityRisk,",
     "        'dinasti.patch': MergeConflict,",
     "        'MBG.targeting_bug': TargetMismatch,",
+    "        'rupiah.exchange_rate': CurrencyPressureWarning,",
+    "        'daya_beli': PurchasingPowerError,",
     "        'masalah_2026.log': UnresolvedIssues,",
     "    }",
     "    raise RuntimeError('CHANGE_REQUIRED')",
@@ -193,7 +197,7 @@ export default function Hutri81Page() {
           <div className="command-history" aria-live="polite">{history.map((line, index) => <div key={`${line}-${index}`} className={line.startsWith("[CRIT]") ? "crit-line" : line.startsWith("[WARN]") ? "warn-line" : line.startsWith("[ OK ]") ? "ok-line" : "history-line"}>{line || "\u00a0"}</div>)}</div>
           <form className="command-form" onSubmit={runCommand}><span className="prompt">user@nusantara:~$</span><input value={command} onChange={(event) => setCommand(event.target.value)} aria-label="Terminal command" placeholder={booted ? "type 'help' for commands" : "booting..."} disabled={!booted} autoComplete="off" /><span className="cursor" aria-hidden="true" /></form>
           <section className="complaint-box" aria-label="Keluh kesah masyarakat"><div className="complaint-title">// public_input::<span>keluh_kesah</span>()</div><form onSubmit={submitComplaint}><textarea value={complaint} onChange={(event) => setComplaint(event.target.value)} maxLength={280} placeholder="// tulis keluh kesah masyarakat..." aria-label="Keluh kesah masyarakat" /><div className="complaint-actions"><small>{complaint.length}/280 :: storage=localStorage</small><button type="submit">submit()</button><button type="button" onClick={shareComplaints}>share()</button></div></form>{complaints.length > 0 && <div className="complaint-list">{complaints.slice(0, visibleComplaints).map((item, index) => <div className="complaint-item" key={`${item}-${index}`}><span className="bullet" aria-hidden="true">•</span>{item}</div>)}{complaints.length > visibleComplaints && <button className="complaint-next" type="button" onClick={() => setVisibleComplaints((count) => count + 12)}>next()</button>}</div>}</section>
-        </div><aside className="system-panel"><div className="panel-heading">class IndonesiaEmas(Beta):</div><dl><div><dt>country</dt><dd>"ID"</dd></div><div><dt>version</dt><dd>81.0.0</dd></div><div><dt>status</dt><dd className="red-value">BUGGY</dd></div><div><dt>stability</dt><dd className="red-value">0.42</dd></div><div><dt>uptime</dt><dd>81 * YEAR</dd></div><div><dt>root_access</dt><dd>False</dd></div></dl><div className="panel-heading commit-heading">git log --oneline</div><ul className="commit-list"><li>Pendidikan.service <b>// FILE_NOT_FOUND</b></li><li>desain.md <b>// NOT_RESPONSIVE</b></li><li>masalah_2026.log <b>// UNRESOLVED</b></li><li>makar.exception <b>// DETECTED</b></li><li>korupsi.vulnerability <b>// CRITICAL</b></li><li>dinasti.patch <b>// MERGE_CONFLICT</b></li><li>MBG.targeting_bug <b>// MISDIRECTED</b></li><li>KDKMP.anomaly <b>// DETECTED</b></li></ul><div className="ascii-flag"><span /><span /></div><p className="panel-note"># kritik = health_check()<br /># TODO: ship_change()</p></aside></div></div>
+        </div><aside className="system-panel"><div className="panel-heading">class IndonesiaEmas(Beta):</div><dl><div><dt>country</dt><dd>"ID"</dd></div><div><dt>version</dt><dd>81.0.0</dd></div><div><dt>status</dt><dd className="red-value">BUGGY</dd></div><div><dt>stability</dt><dd className="red-value">0.42</dd></div><div><dt>uptime</dt><dd>81 * YEAR</dd></div><div><dt>root_access</dt><dd>False</dd></div></dl><div className="panel-heading commit-heading">git log --oneline</div><ul className="commit-list"><li>Pendidikan.service <b>// FILE_NOT_FOUND</b></li><li>desain.md <b>// NOT_RESPONSIVE</b></li><li>masalah_2026.log <b>// UNRESOLVED</b></li><li>makar.exception <b>// DETECTED</b></li><li>korupsi.vulnerability <b>// CRITICAL</b></li><li>dinasti.patch <b>// MERGE_CONFLICT</b></li><li>MBG.targeting_bug <b>// MISDIRECTED</b></li><li>rupiah.exchange_rate <b>// UNDER_PRESSURE</b></li><li>daya_beli <b>// DEGRADING</b></li><li>KDKMP.anomaly <b>// DETECTED</b></li></ul><div className="ascii-flag"><span /><span /></div><p className="panel-note"># kritik = health_check()<br /># TODO: ship_change()</p></aside></div></div>
         <footer className="terminal-footer"><span>PID=1945</span><span>encoding="UTF-8"</span><span>env="BETA"</span><span>© NUSANTARA_OS</span></footer>
       </section><p className="mobile-hint">$ type <b>help</b> | <b>scan</b> | <b>status</b> | <b>rm -rf 02</b></p>
     </main>
