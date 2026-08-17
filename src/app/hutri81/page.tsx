@@ -34,6 +34,14 @@ const dashboard = [
   "    production_readiness = False",
   "    warning = 'bugs_are_features_until_fixed'",
   "",
+  "def audit_public_services():",
+  "    return {",
+  "        'janji': 'deployed',",
+  "        'realisasi': ConnectionError,",
+  "        'transparansi': PermissionDenied,",
+  "        'rakyat': 'waiting_for_patch',",
+  "    }",
+  "",
 ];
 
 const files = ["02/argument.exe", "02/polarisasi.dll", "02/hoaks.log", "02/dinasti.sys", "02/privilege.conf"];
@@ -48,6 +56,7 @@ function commandOutput(command: string): string[] {
     "  status               return system_status()",
     "  scan                 scan_critical_issues(year=2026)",
     "  kritik()             raise RuntimeError('CHANGE_REQUIRED')",
+    "  audit()              audit_public_services()",
     "  rm -rf 02            remove obsolete_services (simulation)",
     "  python3 indonesia_os.py  rerun dashboard()",
     "  merdeka              print('Merdeka!')",
@@ -77,6 +86,18 @@ function commandOutput(command: string): string[] {
     "    }",
     "    raise RuntimeError('CHANGE_REQUIRED')",
     "scan complete: warnings=7, critical=1, excuses=0",
+  ];
+  if (c === "audit" || c === "audit()") return [
+    "def audit_public_services():",
+    "    return {",
+    "        'janji': 'deployed',",
+    "        'realisasi': ConnectionError,",
+    "        'transparansi': PermissionDenied,",
+    "        'rakyat': 'waiting_for_patch',",
+    "        'keadilan': TimeoutError('please_wait'),",
+    "    }",
+    "audit result: FAILED_OPENLY",
+    "message: kritik bukan bug; kritik adalah health_check()",
   ];
   if (c === "rm -rf 02" || c === "rm -rf 02/") return [
     "$ rm -rf 02  # simulation_only=True",
