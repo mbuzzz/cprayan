@@ -47,13 +47,13 @@ export default function DashboardLayout({
         </div>
         
         <nav className="flex-1 p-4 space-y-1.5">
-          <Link href="/dashboard" className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-all ${pathname === '/dashboard' ? 'bg-primary/10 text-primary border border-primary/20 shadow-sm' : 'text-muted hover:text-foreground hover:bg-background'}`}>
+          <Link href="/dashboard" className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-all ${pathname === '/dashboard' ? 'bg-primary/15 text-primary border border-primary/30 shadow-sm font-bold' : 'text-muted hover:text-primary hover:bg-primary/10 hover:border hover:border-primary/20'}`}>
             <LayoutDashboard className="w-5 h-5" /> Dashboard
           </Link>
-          <Link href="/dashboard/orders" className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-all ${pathname === '/dashboard/orders' ? 'bg-primary/10 text-primary border border-primary/20 shadow-sm' : 'text-muted hover:text-foreground hover:bg-background'}`}>
+          <Link href="/dashboard/orders" className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-all ${pathname === '/dashboard/orders' ? 'bg-primary/15 text-primary border border-primary/30 shadow-sm font-bold' : 'text-muted hover:text-primary hover:bg-primary/10 hover:border hover:border-primary/20'}`}>
             <Package className="w-5 h-5" /> Pesanan Saya
           </Link>
-          <Link href="/dashboard/settings" className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-all ${pathname === '/dashboard/settings' ? 'bg-primary/10 text-primary border border-primary/20 shadow-sm' : 'text-muted hover:text-foreground hover:bg-background'}`}>
+          <Link href="/dashboard/settings" className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-all ${pathname === '/dashboard/settings' ? 'bg-primary/15 text-primary border border-primary/30 shadow-sm font-bold' : 'text-muted hover:text-primary hover:bg-primary/10 hover:border hover:border-primary/20'}`}>
             <Settings className="w-5 h-5" /> Pengaturan Akun
           </Link>
         </nav>

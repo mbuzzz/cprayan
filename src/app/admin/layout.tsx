@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { signOut } from "next-auth/react";
 
 export default function AdminLayout({
   children,
@@ -49,16 +50,18 @@ export default function AdminLayout({
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed lg:static inset-y-0 left-0 w-64 bg-card/80 backdrop-blur-xl border-r border-border z-50 transform transition-transform duration-300 ease-in-out ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} flex flex-col custom-shadow`}>
+      <aside className={`fixed lg:static inset-y-0 left-0 w-64 bg-card border-r border-border z-50 transform transition-transform duration-300 ease-in-out ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} flex flex-col custom-shadow`}>
         <div className="h-20 flex items-center justify-between px-6 border-b border-border">
           <Link href="/admin" className="flex items-center gap-3 group">
             <div className="relative">
               <div className="absolute inset-0 bg-primary/20 rounded-full blur-md group-hover:bg-primary/40 transition-all"></div>
               <Image src="/asset/logorayan.png" alt="Logo" width={32} height={32} className="relative z-10" />
             </div>
-            <span className="font-heading text-lg text-primary tracking-wider group-hover:text-black dark:group-hover:text-white transition-colors">ADMIN PANEL</span>
+            <span className="font-heading text-lg font-bold text-primary tracking-wider group-hover:opacity-80 transition-opacity">
+              ADMIN PANEL
+            </span>
           </Link>
-          <button className="lg:hidden text-muted hover:text-black dark:hover:text-white transition-colors" onClick={() => setIsMobileOpen(false)}>
+          <button className="lg:hidden text-muted hover:text-foreground transition-colors" onClick={() => setIsMobileOpen(false)}>
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -72,10 +75,10 @@ export default function AdminLayout({
                 <Link 
                   key={item.name} 
                   href={item.href} 
-                  className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
+                  className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
                     isActive 
-                      ? 'bg-primary/10 text-primary border border-primary/20 shadow-sm' 
-                      : 'text-muted hover:text-foreground hover:bg-gray-100 dark:hover:bg-[#121415]/50 hover:translate-x-1'
+                      ? 'bg-primary/15 text-primary border border-primary/30 shadow-sm font-bold' 
+                      : 'text-muted hover:text-primary hover:bg-primary/10 hover:border hover:border-primary/20 hover:translate-x-1'
                   }`}
                 >
                   {item.icon} {item.name}
@@ -86,7 +89,10 @@ export default function AdminLayout({
         </div>
         
         <div className="p-4 border-t border-border">
-          <button className="flex w-full items-center justify-center gap-2 px-4 py-3.5 text-sm font-bold rounded-lg text-red-500 border border-transparent hover:border-red-500/30 hover:text-red-600 dark:hover:text-red-300 bg-red-50 dark:bg-red-500/5 hover:bg-red-100 dark:hover:bg-red-500/10 transition-all">
+          <button 
+            onClick={() => signOut({ callbackUrl: '/' })}
+            className="flex w-full items-center justify-center gap-2 px-4 py-3 text-sm font-bold rounded-lg text-red-500 border border-red-500/20 bg-red-500/5 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
+          >
             <LogOut className="w-4 h-4" /> Keluar
           </button>
         </div>
@@ -95,7 +101,7 @@ export default function AdminLayout({
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 relative z-10">
         {/* Top Header */}
-        <header className="h-20 bg-card/80 backdrop-blur-xl border-b border-border flex items-center justify-between px-6 sticky top-0 z-30 custom-shadow transition-colors duration-300">
+        <header className="h-20 bg-card border-b border-border flex items-center justify-between px-6 sticky top-0 z-30 custom-shadow transition-colors duration-300">
           <button 
             className="lg:hidden text-muted hover:text-foreground transition-colors"
             onClick={() => setIsMobileOpen(true)}
@@ -105,25 +111,25 @@ export default function AdminLayout({
           
           <div className="flex-1"></div>
           
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 sm:gap-6">
             <ThemeToggle />
-            <Link href="/" target="_blank" className="flex items-center gap-2 text-sm text-muted hover:text-primary transition-colors">
+            <Link href="/" target="_blank" className="flex items-center gap-2 text-xs uppercase tracking-wider font-mono text-muted hover:text-primary transition-colors font-medium">
               <ExternalLink className="w-4 h-4" /> Lihat Website
             </Link>
-            <div className="flex items-center gap-3 pl-6 border-l border-border">
+            <div className="flex items-center gap-3 pl-4 sm:pl-6 border-l border-border">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold text-foreground">Admin</p>
-                <p className="text-[10px] text-muted uppercase tracking-wider">Superuser</p>
+                <p className="text-sm font-bold text-foreground">Admin Studio</p>
+                <p className="text-[10px] text-primary uppercase tracking-wider font-mono">Superuser</p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-background border border-primary/30 flex items-center justify-center text-primary font-bold shadow-sm">
+              <div className="w-10 h-10 rounded-xl bg-surface border border-primary/30 flex items-center justify-center text-primary font-bold shadow-sm">
                 AD
               </div>
             </div>
           </div>
         </header>
 
-        {/* Page Content */}
-        <main className="flex-1 p-6 lg:p-10 overflow-x-hidden">
+        {/* Dynamic Page Content */}
+        <main className="p-6 lg:p-10 flex-1 overflow-y-auto">
           {children}
         </main>
       </div>

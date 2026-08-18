@@ -57,10 +57,10 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 type="button"
-                className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-md transition-all duration-300 cursor-pointer ${
+                className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-md transition-all duration-200 cursor-pointer ${
                   activeTab === tab.id 
-                    ? 'bg-primary/10 text-primary border border-primary/20 shadow-sm font-bold' 
-                    : 'text-muted hover:text-foreground hover:bg-background'
+                    ? 'bg-primary/15 text-primary border border-primary/30 shadow-sm font-bold' 
+                    : 'text-muted hover:text-primary hover:bg-primary/10 hover:border hover:border-primary/20'
                 }`}
               >
                 {tab.icon} {tab.label}
