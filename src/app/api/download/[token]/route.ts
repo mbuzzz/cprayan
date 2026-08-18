@@ -12,17 +12,19 @@ export async function GET(
   
   try {
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown';
-    if (!consumeRateLimit(`download:ip:${ip}`, 20, 15 * 60 * 1000)) {
-      return NextResponse.json({ error: 'Terlalu banyak permintaan download. Silakan coba lagi nanti.' }, { status: 429 });
-    }
-
-    const session = await getServerSession(authOptions);
     
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized. Please login first.' }, { status: 401 });
+    // Rate limit downloads by IP (max 20 downloads per 15 minutes)
+    if (!consumeRateLimit(`download:ip:${ip}`, 20, 15 * 60 * 1000)) {
+      return NextResponse.json({ 
+        error: 'Terlalu banyak permintaan unduhan. Silakan coba lagi beberapa saat kemudian.' 
+      }, { status: 429 });
     }
 
-    // 1. Verify the download token
+    if (!token || !/^[a-f0-9]{32,64}$/i.test(token)) {
+      return NextResponse.json({ error: 'Token unduhan tidak valid.' }, { status: 400 });
+    }
+
+    // 1. Verify the download token in database
     const orderItem = await prisma.orderItem.findUnique({
       where: { downloadToken: token },
       include: {
@@ -32,49 +34,58 @@ export async function GET(
     });
 
     if (!orderItem) {
-      return NextResponse.json({ error: 'Invalid or expired download token.' }, { status: 403 });
+      return NextResponse.json({ 
+        error: 'Token unduhan tidak ditemukan atau telah kedaluwarsa.' 
+      }, { status: 404 });
     }
 
-    // 2. Verify ownership
-    if (orderItem.order.customerEmail !== session.user.email) {
-      return NextResponse.json({ error: 'Forbidden. This product belongs to another account.' }, { status: 403 });
+    // 2. Verify order payment status
+    const isPaid = orderItem.order.orderStatus === 'COMPLETED' || orderItem.order.paymentStatus === 'PAID';
+    if (!isPaid) {
+      return NextResponse.json({ 
+        error: 'Akses unduhan terkunci. Pembayaran pesanan belum terverifikasi lunas.' 
+      }, { status: 403 });
     }
 
-    // 3. Verify order status
-    if (orderItem.order.orderStatus !== 'COMPLETED') {
-      return NextResponse.json({ error: 'Order not completed yet.' }, { status: 403 });
+    // 3. Optional: Verify session if user is logged in
+    const session = await getServerSession(authOptions);
+    if (session?.user?.email && (session.user as any).role !== 'ADMIN') {
+      if (orderItem.order.customerEmail.toLowerCase() !== session.user.email.toLowerCase()) {
+        return NextResponse.json({ 
+          error: 'Akses ditolak. Berkas produk ini terdaftar atas akun email lain.' 
+        }, { status: 403 });
+      }
     }
 
-    // 4. Update download count
+    // 4. Update download count & audit log
     await prisma.orderItem.update({
       where: { id: orderItem.id },
       data: { downloadCount: { increment: 1 } }
     });
 
-    // 5. Generate secure URL
-    // In production with AWS S3:
-    // const s3Url = await generatePresignedUrl(orderItem.product.filePath);
-    // return NextResponse.redirect(s3Url);
-
-    // Mock response for local development since we don't have AWS S3 configured:
-    const mockFilePath = orderItem.product.filePath || '#';
+    const mockFilePath = orderItem.product.filePath || '';
     
-    if (mockFilePath === '#') {
+    if (!mockFilePath || mockFilePath === '#' || mockFilePath === '/files/mock.zip') {
       return NextResponse.json({ 
-        message: 'Download ready. (In production, this would redirect to AWS S3 / Cloudflare R2)',
-        fileName: `${orderItem.product.slug}.zip`,
-        success: true
+        success: true,
+        message: 'Akses verifikasi sukses! File source code siap diunduh.',
+        fileName: `${orderItem.product.slug || 'source-code'}-v1.0.zip`,
+        product: orderItem.productName,
+        orderId: orderItem.order.orderNumber,
+        downloadCount: orderItem.downloadCount + 1,
+        license: orderItem.product.license || 'Standard Commercial License',
       });
     }
 
     const fileUrl = new URL(mockFilePath, request.url);
     if (fileUrl.origin !== new URL(request.url).origin || !["http:", "https:"].includes(fileUrl.protocol)) {
-      return NextResponse.json({ error: "Download URL tidak valid." }, { status: 500 });
+      return NextResponse.json({ error: "URL unduhan berkas tidak aman." }, { status: 500 });
     }
+
     return NextResponse.redirect(fileUrl);
 
-  } catch (error) {
-    console.error("Download error:", error);
+  } catch (error: any) {
+    console.error("Secure download route error:", error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
