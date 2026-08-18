@@ -115,9 +115,9 @@ export const translations: Record<Language, Translations> = {
     },
     hero: {
       badge: "Studio Digital Kreatif & Enterprise",
-      titleFirst: "BANGUN.",
-      titleSecond: "BELI.",
-      titleThird: "TUMBUH.",
+      titleFirst: "SOLUSI",
+      titleSecond: "DIGITAL",
+      titleThird: "KREATIF",
       subtitle:
         "PT. Rayan Smart Kreatif menghadirkan solusi teknologi enterprise, dari rekayasa perangkat lunak kustom hingga aset produk digital premium untuk mengakselerasi bisnis Anda.",
       exploreMarketplace: "Jelajahi Marketplace",
@@ -223,9 +223,9 @@ export const translations: Record<Language, Translations> = {
     },
     hero: {
       badge: "Creative & Enterprise Digital Studio",
-      titleFirst: "BUILD.",
-      titleSecond: "BUY.",
-      titleThird: "GROW.",
+      titleFirst: "CREATIVE",
+      titleSecond: "DIGITAL",
+      titleThird: "SOLUTIONS",
       subtitle:
         "PT. Rayan Smart Kreatif delivers enterprise technology solutions, from bespoke software engineering to premium digital assets to accelerate your business.",
       exploreMarketplace: "Explore Marketplace",
@@ -331,9 +331,9 @@ export const translations: Record<Language, Translations> = {
     },
     hero: {
       badge: "استوديو رقمي إبداعي للمؤسسات والشركات",
-      titleFirst: "ابنِ.",
-      titleSecond: "اشترِ.",
-      titleThird: "انمُ.",
+      titleFirst: "حلول",
+      titleSecond: "رقمية",
+      titleThird: "إبداعية",
       subtitle:
         "تقدم شركة ريان سمارت كرياتيف حلولاً تقنية متطورة للمؤسسات، من هندسة البرمجيات المخصصة إلى الأصول الرقمية المتميزة لتسريع أعمالك.",
       exploreMarketplace: "استكشف المتجر",
@@ -439,9 +439,9 @@ export const translations: Record<Language, Translations> = {
     },
     hero: {
       badge: "创意与企业级数字化工作室",
-      titleFirst: "构建.",
-      titleSecond: "获取.",
-      titleThird: "增长.",
+      titleFirst: "创意",
+      titleSecond: "数字",
+      titleThird: "解决方案",
       subtitle:
         "PT. Rayan Smart Kreatif 提供企业级技术解决方案，从定制化软件开发到高阶数字资产，助力您的业务快速腾飞。",
       exploreMarketplace: "探索数字市场",

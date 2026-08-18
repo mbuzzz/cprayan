@@ -1,13 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, ArrowLeft, Star, ShoppingBag, Layers, Sparkles, Code2, Rocket, ShieldCheck } from "lucide-react";
+import { 
+  ArrowRight, 
+  ArrowLeft, 
+  Star, 
+  ShoppingBag, 
+  Layers, 
+  Sparkles, 
+  Code2, 
+  Rocket, 
+  ShieldCheck, 
+  Smartphone, 
+  Globe, 
+  Server, 
+  Database, 
+  ExternalLink,
+  CheckCircle2,
+  Cpu
+} from "lucide-react";
 import { useLanguage } from "./LanguageContext";
 
 interface HomeClientProps {
   products: any[];
   categories: any[];
   featuredProject: any;
+  projects?: any[];
   services: any[];
   settings: { key: string; value: string }[];
 }
@@ -16,6 +34,7 @@ export default function HomeClient({
   products,
   categories,
   featuredProject,
+  projects = [],
   services,
   settings,
 }: HomeClientProps) {
@@ -33,6 +52,7 @@ export default function HomeClient({
 
   return (
     <div className="flex flex-col bg-background text-foreground selection:bg-primary selection:text-on-primary transition-colors duration-300">
+      
       {/* 1. HERO SECTION (Swiss Asymmetry Grid with Rich Hovers) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-8 py-16 sm:py-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center min-h-[85vh]">
         <div className="lg:col-span-6 z-10 space-y-8">
@@ -120,73 +140,56 @@ export default function HomeClient({
             </p>
           </div>
 
-          {/* Category Filter Pills */}
-          <div className="flex justify-start md:justify-center gap-3 md:gap-4 border-b border-border pb-4 overflow-x-auto whitespace-nowrap text-xs uppercase tracking-widest font-mono">
-            <Link
-              href="/products"
-              className="px-4 py-2 bg-primary/10 text-primary border border-primary font-bold rounded-full hover:bg-primary hover:text-on-primary transition-all duration-300 shadow-sm"
-            >
-              {t.marketplace.all}
-            </Link>
-            {categories.map((cat) => (
-              <Link
-                key={cat.id}
-                href={`/products?category=${cat.slug}`}
-                className="px-4 py-2 bg-card border border-border text-muted hover:text-primary hover:border-primary/60 hover:bg-surface rounded-full transition-all duration-300"
-              >
-                {cat.name}
-              </Link>
-            ))}
-          </div>
-
-          {/* Product Grid with Hover Lift & Image Zoom */}
           {products.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 pt-4">
-              {products.map((product) => {
-                let screenshots: string[] = [];
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {products.slice(0, 8).map((product) => {
+                let images: string[] = [];
                 try {
-                  if (product.screenshots) screenshots = JSON.parse(product.screenshots);
+                  if (product.images) images = JSON.parse(product.images);
                 } catch (e) {}
-                const productImage = screenshots[0] || "/asset/logorayan.png";
+                const mainImage = images[0] || "/asset/logorayan.png";
 
                 return (
                   <Link
                     key={product.id}
                     href={`/products/${product.slug}`}
-                    className="group flex flex-col bg-card border border-border hover:border-primary transition-all duration-300 p-4 rounded-xl shadow-sm hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)] dark:hover:shadow-[0_12px_30px_rgba(242,202,80,0.15)] hover:-translate-y-1.5 cursor-pointer"
+                    className="group bg-card border border-border overflow-hidden hover:border-primary transition-all duration-300 flex flex-col rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1.5"
                   >
-                    <div className="aspect-[4/3] bg-surface overflow-hidden relative mb-4 border border-border/50 rounded-lg">
+                    <div className="aspect-[4/3] bg-background relative overflow-hidden flex items-center justify-center p-4">
                       <img
-                        src={productImage}
-                        alt={product.title}
-                        className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 ease-out"
+                        src={mainImage}
+                        alt={product.name}
+                        className="max-h-full max-w-full object-contain filter group-hover:scale-110 transition-transform duration-500"
                       />
                       {product.featured && (
-                        <div className="absolute top-2.5 start-2.5 bg-primary text-black px-2 py-0.5 font-mono text-[9px] uppercase font-bold tracking-wider rounded shadow">
+                        <span className="absolute top-3 right-3 bg-primary/20 backdrop-blur-md border border-primary/40 text-primary text-[10px] font-mono px-2.5 py-0.5 uppercase tracking-wider rounded font-bold">
                           {t.marketplace.featuredBadge}
-                        </div>
+                        </span>
                       )}
-                      <div className="absolute top-2.5 end-2.5 bg-background/90 text-foreground border border-border px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider rounded backdrop-blur-sm">
-                        {product.category?.name || "ASSET"}
+                    </div>
+                    <div className="p-5 flex-1 flex flex-col justify-between space-y-4 border-t border-border group-hover:border-primary/30 transition-colors">
+                      <div>
+                        <span className="font-mono text-[10px] uppercase tracking-wider text-muted group-hover:text-primary transition-colors">
+                          {product.category?.name || "Digital Asset"}
+                        </span>
+                        <h3 className="font-heading font-bold text-sm sm:text-base text-foreground group-hover:text-primary transition-colors line-clamp-1 mt-1">
+                          {product.name}
+                        </h3>
                       </div>
-                    </div>
-
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-heading font-semibold text-base text-foreground group-hover:text-primary transition-colors duration-200 line-clamp-1">
-                        {product.title}
-                      </h3>
-                      <span className="font-mono font-bold text-sm text-primary ms-2 flex-shrink-0">
-                        Rp {Number(product.price).toLocaleString("id-ID")}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between text-xs text-muted mt-auto pt-3 border-t border-border/50">
-                      <span className="font-mono text-[10px] text-muted">
-                        {product.version ? `v${product.version}` : product.category?.name || t.marketplace.ready}
-                      </span>
-                      <div className="flex items-center gap-1 text-primary">
-                        <Star className="w-3.5 h-3.5 fill-current" />
-                        <span className="font-mono text-[11px] text-foreground font-semibold">5.0</span>
+                      <div className="flex items-center justify-between pt-2 border-t border-border/40">
+                        <span className="font-mono text-sm sm:text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                          {product.price > 0
+                            ? new Intl.NumberFormat("id-ID", {
+                                style: "currency",
+                                currency: "IDR",
+                                maximumFractionDigits: 0,
+                              }).format(product.price)
+                            : "FREE"}
+                        </span>
+                        <span className="font-mono text-[11px] uppercase tracking-wider text-primary group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform flex items-center gap-1 font-semibold">
+                          <span>{t.marketplace.ready}</span>
+                          <ArrowIcon className="w-3.5 h-3.5" />
+                        </span>
                       </div>
                     </div>
                   </Link>
@@ -194,9 +197,9 @@ export default function HomeClient({
               })}
             </div>
           ) : (
-            <div className="text-center py-12 text-muted border border-border p-8 rounded-xl">
+            <div className="text-center py-16 border border-border rounded-xl p-8 bg-card">
               <ShoppingBag className="w-12 h-12 text-primary mx-auto mb-3 opacity-60" />
-              <p className="text-sm">{t.marketplace.noProducts}</p>
+              <p className="text-muted text-sm">{t.marketplace.noProducts}</p>
             </div>
           )}
 
@@ -212,7 +215,246 @@ export default function HomeClient({
         </div>
       </section>
 
-      {/* 3. FIND WHAT YOU'RE BUILDING (Category Bento Cards with Hover Glow) */}
+      {/* 3. SECTION PORTOFOLIO TERPILIH (Featured Projects Showcase) */}
+      <section className="border-t border-border py-20 px-4 sm:px-8 bg-background transition-colors duration-300">
+        <div className="max-w-7xl mx-auto space-y-12">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-border pb-8">
+            <div className="space-y-3 max-w-2xl">
+              <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold">
+                PORTOFOLIO TERPILIH
+              </span>
+              <h2 className="font-heading text-3xl sm:text-5xl font-bold text-foreground tracking-tight">
+                Karya Nyata & Solusi Digital
+              </h2>
+              <p className="text-sm sm:text-base text-muted leading-relaxed">
+                Studi kasus proyek-proyek inovatif yang telah sukses kami kembangkan dengan standar arsitektur modern dan performa optimal.
+              </p>
+            </div>
+            <div>
+              <Link
+                href="/projects"
+                className="inline-flex items-center gap-2 px-6 py-3 border border-border text-foreground text-xs uppercase font-mono tracking-wider hover:border-primary hover:text-primary hover:bg-surface rounded-lg transition-all"
+              >
+                <span>Lihat Semua Portofolio</span>
+                <ArrowIcon className="w-4 h-4 text-primary" />
+              </Link>
+            </div>
+          </div>
+
+          {projects.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {projects.slice(0, 3).map((item) => {
+                let screenshots: string[] = [];
+                let techStack: string[] = [];
+                try {
+                  if (item.screenshots) screenshots = JSON.parse(item.screenshots);
+                  if (item.techStack) techStack = JSON.parse(item.techStack);
+                } catch (e) {}
+                const thumbnail = screenshots[0] || "/asset/logorayan.png";
+
+                return (
+                  <Link
+                    key={item.id}
+                    href={`/projects/${item.slug}`}
+                    className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary transition-all duration-300 flex flex-col shadow-sm hover:shadow-xl hover:-translate-y-1.5"
+                  >
+                    <div className="aspect-[16/10] bg-surface relative overflow-hidden">
+                      <img
+                        src={thumbnail}
+                        alt={item.title}
+                        className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
+                      {item.featured && (
+                        <span className="absolute top-3 right-3 bg-primary text-black text-[10px] font-mono px-2.5 py-0.5 uppercase tracking-wider rounded font-bold shadow">
+                          Featured Case
+                        </span>
+                      )}
+                    </div>
+                    <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+                      <div className="space-y-2">
+                        <h3 className="font-heading font-bold text-lg text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                          {item.title}
+                        </h3>
+                        <p className="text-xs text-muted line-clamp-2 leading-relaxed">
+                          {item.description}
+                        </p>
+                      </div>
+
+                      {techStack.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 pt-2 border-t border-border/50">
+                          {techStack.slice(0, 3).map((t, idx) => (
+                            <span
+                              key={idx}
+                              className="text-[10px] font-mono uppercase px-2 py-0.5 bg-surface text-foreground/80 rounded border border-border"
+                            >
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="pt-2 text-primary font-mono text-xs uppercase tracking-wider flex items-center justify-between font-bold">
+                        <span>Lihat Detail Studi Kasus</span>
+                        <ArrowIcon className="w-4 h-4 transform group-hover:translate-x-2 rtl:group-hover:-translate-x-2 transition-transform" />
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-16 border border-border rounded-xl p-8 bg-card">
+              <Layers className="w-12 h-12 text-primary mx-auto mb-3 opacity-60" />
+              <p className="text-muted text-sm">Belum ada portofolio yang dipublikasikan.</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* 4. SECTION JASA CUSTOM WEB & APP (Bespoke Engineering) */}
+      <section className="border-t border-border py-20 px-4 sm:px-8 bg-surface transition-colors duration-300">
+        <div className="max-w-7xl mx-auto space-y-16">
+          <div className="max-w-3xl mx-auto text-center space-y-4">
+            <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold">
+              LAYANAN REKAYASA SISTEM
+            </span>
+            <h2 className="font-heading text-3xl sm:text-5xl font-bold text-foreground tracking-tight">
+              Jasa Custom Website & Mobile Apps
+            </h2>
+            <p className="text-sm sm:text-base text-muted leading-relaxed">
+              Kami merancang dan membangun platform digital kustom berperforma tinggi yang disesuaikan dengan alur bisnis unik perusahaan Anda.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Service 1: Custom Web App */}
+            <div className="p-7 bg-card border border-border hover:border-primary rounded-xl transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1.5 group flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-black transition-colors">
+                  <Globe className="w-6 h-6" />
+                </div>
+                <h3 className="font-heading font-bold text-xl text-foreground group-hover:text-primary transition-colors">
+                  Web Architecture & Portal
+                </h3>
+                <p className="text-xs text-muted leading-relaxed">
+                  Pengembangan web app modern, company profile berkelas, marketplace, dan dashboard analitik berbasis Next.js & React.
+                </p>
+              </div>
+              <ul className="space-y-2 mt-6 pt-4 border-t border-border/60 text-xs text-muted">
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>SEO & Ultra-fast Loading</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Responsive & Mobile Ready</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Service 2: Mobile Apps */}
+            <div className="p-7 bg-card border border-border hover:border-primary rounded-xl transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1.5 group flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-black transition-colors">
+                  <Smartphone className="w-6 h-6" />
+                </div>
+                <h3 className="font-heading font-bold text-xl text-foreground group-hover:text-primary transition-colors">
+                  Mobile App (iOS & Android)
+                </h3>
+                <p className="text-xs text-muted leading-relaxed">
+                  Aplikasi mobile native dan hybrid cross-platform dengan interaksi sentuh mulus, notifikasi realtime, dan offline support.
+                </p>
+              </div>
+              <ul className="space-y-2 mt-6 pt-4 border-t border-border/60 text-xs text-muted">
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>React Native & Flutter</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>App Store & Play Store Publish</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Service 3: Enterprise SaaS */}
+            <div className="p-7 bg-card border border-border hover:border-primary rounded-xl transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1.5 group flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-black transition-colors">
+                  <Server className="w-6 h-6" />
+                </div>
+                <h3 className="font-heading font-bold text-xl text-foreground group-hover:text-primary transition-colors">
+                  Enterprise SaaS & ERP
+                </h3>
+                <p className="text-xs text-muted leading-relaxed">
+                  Sistem informasi manajemen, CRM, integrasi payment gateway, invoice otomatis, dan manajemen hak akses multi-peran.
+                </p>
+              </div>
+              <ul className="space-y-2 mt-6 pt-4 border-t border-border/60 text-xs text-muted">
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Role-Based Access Control</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Automated Workflow & Reports</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Service 4: API & Cloud Architecture */}
+            <div className="p-7 bg-card border border-border hover:border-primary rounded-xl transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1.5 group flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-black transition-colors">
+                  <Cpu className="w-6 h-6" />
+                </div>
+                <h3 className="font-heading font-bold text-xl text-foreground group-hover:text-primary transition-colors">
+                  API & Cloud Scalability
+                </h3>
+                <p className="text-xs text-muted leading-relaxed">
+                  Arsitektur backend mikroservis tangguh, integrasi pihak ketiga, proteksi keamanan tingkat tinggi, dan optimasi database.
+                </p>
+              </div>
+              <ul className="space-y-2 mt-6 pt-4 border-t border-border/60 text-xs text-muted">
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>High Availability Infrastructure</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Automated Backup & Security</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Consultation CTA Banner */}
+          <div className="p-8 sm:p-12 bg-gradient-to-r from-card via-surface to-card border border-border rounded-2xl flex flex-col lg:flex-row items-center justify-between gap-8 custom-shadow">
+            <div className="space-y-3 text-center lg:text-left">
+              <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold">
+                KONSULTASI GRATIS
+              </span>
+              <h3 className="font-heading text-2xl sm:text-3xl font-bold text-foreground">
+                Siap Mewujudkan Ide Digital Perusahaan Anda?
+              </h3>
+              <p className="text-sm text-muted max-w-xl">
+                Diskusikan kebutuhan arsitektur sistem, timeline, dan estimasi anggaran bersama tim teknis PT. Rayan Smart Kreatif.
+              </p>
+            </div>
+            <div className="flex-shrink-0 flex flex-wrap gap-4 justify-center">
+              <Link
+                href="/about"
+                className="px-8 py-3.5 bg-primary text-on-primary font-bold text-xs uppercase tracking-widest hover:opacity-90 transition-all rounded shadow-md"
+              >
+                Mulai Konsultasi & Brief Proyek
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. FIND WHAT YOU'RE BUILDING (Category Bento Cards with Hover Glow) */}
       <section className="border-t border-border py-20 px-4 sm:px-8 transition-colors duration-300">
         <div className="max-w-7xl mx-auto space-y-12">
           <div className="space-y-3">
@@ -252,7 +494,7 @@ export default function HomeClient({
         </div>
       </section>
 
-      {/* 4. BUILT FOR BUILDERS (3 Pillars with Hover Effects) */}
+      {/* 6. BUILT FOR BUILDERS (3 Pillars with Hover Effects) */}
       <section className="bg-surface border-t border-border py-20 px-4 sm:px-8 transition-colors duration-300">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="group bg-card md:bg-transparent p-6 md:p-0 md:border-b-0 md:border-e border-border md:pe-8 space-y-4 rounded-xl md:rounded-none transition-all hover:-translate-y-0.5">
@@ -281,69 +523,8 @@ export default function HomeClient({
         </div>
       </section>
 
-      {/* 5. NEED SOMETHING CUSTOM (Agency Services with Hover Cards) */}
-      <section className="border-t border-border py-20 px-4 sm:px-8 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-5 space-y-6">
-            <span className="font-mono text-xs uppercase tracking-widest text-primary font-semibold block">
-              {t.agency.badge}
-            </span>
-            <h2 className="font-heading text-3xl sm:text-5xl font-bold text-foreground leading-tight">
-              {t.agency.title}
-            </h2>
-            <p className="text-sm sm:text-base text-muted leading-relaxed">
-              {t.agency.subtitle}
-            </p>
-            <div className="pt-2">
-              <Link
-                href="/services"
-                className="inline-block px-8 py-3.5 border-2 border-primary text-primary font-mono text-xs uppercase tracking-widest hover:bg-primary hover:text-on-primary hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 font-bold rounded"
-              >
-                {t.agency.cta}
-              </Link>
-            </div>
-          </div>
-
-          <div className="lg:col-span-7">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              {services.map((svc) => {
-                let features: string[] = [];
-                try {
-                  if (svc.features) features = JSON.parse(svc.features);
-                } catch (e) {}
-                return (
-                  <div
-                    key={svc.id}
-                    className="p-6 bg-card border border-border hover:border-primary transition-all duration-300 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 group"
-                  >
-                    <h3 className="font-heading font-bold text-lg text-foreground group-hover:text-primary transition-colors mb-2">
-                      {svc.title}
-                    </h3>
-                    <p className="text-xs text-muted mb-4 leading-relaxed line-clamp-3">
-                      {svc.description}
-                    </p>
-                    {features.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5">
-                        {features.slice(0, 3).map((f, i) => (
-                          <span
-                            key={i}
-                            className="font-mono text-[9px] uppercase px-2.5 py-1 bg-surface text-primary border border-border group-hover:border-primary/40 rounded transition-colors"
-                          >
-                            {f}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 6. FROM IDEA TO PRODUCT (4-Step Methodology with Interactive Cards) */}
-      <section className="bg-surface border-t border-border py-20 px-4 sm:px-8 transition-colors duration-300">
+      {/* 7. FROM IDEA TO PRODUCT (4-Step Methodology with Interactive Cards) */}
+      <section className="border-t border-border py-20 px-4 sm:px-8 bg-background transition-colors duration-300">
         <div className="max-w-7xl mx-auto space-y-16">
           <div className="text-center space-y-3 max-w-xl mx-auto">
             <h2 className="font-heading text-3xl sm:text-4xl font-bold text-foreground">
@@ -398,30 +579,7 @@ export default function HomeClient({
         </div>
       </section>
 
-      {/* 7. BECOME A CREATOR */}
-      <section className="border-t border-border py-20 px-4 sm:px-8 text-center bg-background transition-colors duration-300">
-        <div className="max-w-3xl mx-auto space-y-6">
-          <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold block">
-            {t.creator.badge}
-          </span>
-          <h2 className="font-heading text-3xl sm:text-5xl font-bold text-foreground">
-            {t.creator.title}
-          </h2>
-          <p className="text-sm sm:text-base text-muted max-w-xl mx-auto leading-relaxed">
-            {t.creator.subtitle}
-          </p>
-          <div className="pt-2">
-            <Link
-              href="/contact"
-              className="inline-block px-8 py-3.5 border-2 border-border text-foreground font-mono text-xs uppercase tracking-widest hover:border-primary hover:text-primary hover:bg-primary/5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 font-bold rounded"
-            >
-              {t.creator.cta}
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 8. FINAL DUAL SPLIT CTA (Interactive Hover Experience) */}
+      {/* 8. FINAL DUAL SPLIT CTA */}
       <section className="grid grid-cols-1 md:grid-cols-2 border-t border-border min-h-[40vh]">
         <Link
           href="/products"
@@ -440,7 +598,7 @@ export default function HomeClient({
         </Link>
 
         <Link
-          href="/contact"
+          href="/about"
           className="bg-surface hover:bg-card/80 transition-all duration-500 flex flex-col justify-center items-center text-center p-12 sm:p-20 group cursor-pointer"
         >
           <h2 className="font-heading text-2xl sm:text-3xl font-bold text-foreground group-hover:text-primary transition-colors duration-300 mb-3">

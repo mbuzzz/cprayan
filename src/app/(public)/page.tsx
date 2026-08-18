@@ -36,21 +36,18 @@ export default async function Home() {
     console.error("Failed to fetch categories:", e);
   }
 
-  // 4. Fetch featured project from database
+  // 4. Fetch featured and recent projects from database
   let featuredProject: any = null;
+  let projects: any[] = [];
   try {
-    featuredProject = await prisma.project.findFirst({
-      where: { published: true, featured: true },
+    projects = await prisma.project.findMany({
+      where: { published: true },
+      take: 3,
       orderBy: { createdAt: "desc" },
     });
-    if (!featuredProject) {
-      featuredProject = await prisma.project.findFirst({
-        where: { published: true },
-        orderBy: { createdAt: "desc" },
-      });
-    }
+    featuredProject = projects.find((p) => p.featured) || projects[0] || null;
   } catch (e) {
-    console.error("Failed to fetch featured project:", e);
+    console.error("Failed to fetch projects:", e);
   }
 
   // 5. Fetch real services from database
@@ -58,7 +55,7 @@ export default async function Home() {
   try {
     services = await prisma.service.findMany({
       where: { published: true },
-      take: 4,
+      take: 6,
       orderBy: { order: "asc" },
     });
   } catch (e) {
@@ -70,6 +67,7 @@ export default async function Home() {
       products={products}
       categories={categories}
       featuredProject={featuredProject}
+      projects={projects}
       services={services}
       settings={settings}
     />
