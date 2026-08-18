@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCart, Star, Check, Calendar, Tag, RefreshCw, FileCode, MonitorPlay, ChevronRight } from "lucide-react";
+import { ShoppingCart, Star, Check, Calendar, Tag, RefreshCw, FileCode, MonitorPlay, ChevronRight, ShieldCheck } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import AddToCartButton from "@/components/AddToCartButton";
@@ -155,6 +155,12 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
                   <span className="text-muted flex items-center gap-2"><Tag className="w-4 h-4" /> Version</span>
                   <span className="text-foreground">{product.version || "1.0.0"}</span>
                 </div>
+                {product.license && (
+                  <div className="flex justify-between">
+                    <span className="text-muted flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-primary" /> License</span>
+                    <span className="text-foreground font-medium">{product.license}</span>
+                  </div>
+                )}
                 <div className="flex justify-between border-t border-border pt-4">
                   <span className="text-muted flex items-center gap-2"><FileCode className="w-4 h-4" /> Category</span>
                   <span className="text-primary font-medium">{product.category?.name || "Uncategorized"}</span>

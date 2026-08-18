@@ -22,6 +22,7 @@ export default function ProductForm({ categories, initialData }: { categories: a
     price: initialData?.price?.toString() || "0",
     categoryId: initialData?.categoryId || (categories.length > 0 ? categories[0].id : ""),
     version: initialData?.version || "1.0.0",
+    license: initialData?.license || "",
     filePath: initialData?.filePath || "",
     published: initialData ? initialData.published : true,
     featured: initialData ? initialData.featured : false,
@@ -127,7 +128,7 @@ export default function ProductForm({ categories, initialData }: { categories: a
               />
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Harga (Rp) *</label>
                 <input 
@@ -154,6 +155,30 @@ export default function ProductForm({ categories, initialData }: { categories: a
                   className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:border-primary transition-colors font-mono" 
                   placeholder="1.0.0"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1 flex items-center justify-between">
+                  <span>Lisensi</span>
+                  <span className="text-[10px] text-muted font-normal">(Opsional)</span>
+                </label>
+                <input 
+                  type="text" 
+                  name="license" 
+                  list="license-options"
+                  value={formData.license} 
+                  onChange={handleChange}
+                  className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:border-primary transition-colors" 
+                  placeholder="Misal: Standard Commercial"
+                />
+                <datalist id="license-options">
+                  <option value="Standard Commercial License" />
+                  <option value="Personal Use License" />
+                  <option value="Extended / Multi-Use License" />
+                  <option value="MIT License" />
+                  <option value="GNU General Public License v3" />
+                  <option value="Proprietary License" />
+                  <option value="Creative Commons (CC-BY)" />
+                </datalist>
               </div>
             </div>
           </div>

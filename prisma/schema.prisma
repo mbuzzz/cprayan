@@ -106,6 +106,7 @@ model Product {
   content     String?
   price       Float     @default(0)
   version     String?
+  license     String?
   releaseDate DateTime?
   filePath    String?
   featured    Boolean   @default(false)
