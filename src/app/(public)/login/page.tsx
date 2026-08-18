@@ -54,7 +54,7 @@ export default function LoginPage() {
           <Link href="/" className="inline-block relative group">
             <div className="absolute inset-0 bg-primary/20 rounded-full blur-md group-hover:bg-primary/40 transition-all"></div>
             <div className="w-16 h-16 relative z-10 mx-auto">
-              <Image src="/asset/logorayan.png" alt="Logo" fill className="object-contain" />
+              <Image src="/asset/logorayan.png" alt="Logo" fill sizes="64px" className="object-contain" />
             </div>
           </Link>
           <h1 className="text-3xl font-bold mt-6 mb-2 text-foreground">Selamat Datang</h1>

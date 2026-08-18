@@ -40,6 +40,7 @@ export default function Navbar() {
                 src="/asset/logorayan.png"
                 alt="PT. Rayan Smart Kreatif Logo"
                 fill
+                sizes="32px"
                 className="object-contain filter brightness-110"
               />
             </div>

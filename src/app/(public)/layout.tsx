@@ -25,6 +25,7 @@ export default function PublicLayout({
                   src="/asset/logorayan.png"
                   alt="PT. Rayan Smart Kreatif"
                   fill
+                  sizes="32px"
                   className="object-contain filter brightness-110"
                 />
               </div>
