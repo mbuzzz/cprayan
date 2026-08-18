@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Save, ArrowLeft, Image as ImageIcon, Link as LinkIcon, Code } from "lucide-react";
+import { Save, ArrowLeft, Image as ImageIcon, Code, FileText } from "lucide-react";
 import Link from "next/link";
 import { createProject, updateProject } from "@/app/actions/project";
+import RichTextEditor from "@/components/admin/RichTextEditor";
+import FileUpload from "@/components/admin/FileUpload";
+import TagInput from "@/components/admin/TagInput";
 
 export default function ProjectForm({ initialData }: { initialData?: any }) {
   const router = useRouter();
@@ -70,7 +73,7 @@ export default function ProjectForm({ initialData }: { initialData?: any }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {error && (
-        <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-md">
+        <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-md font-mono text-sm">
           {error}
         </div>
       )}
@@ -94,7 +97,7 @@ export default function ProjectForm({ initialData }: { initialData?: any }) {
                 <label className="block text-sm font-medium text-foreground mb-1">Slug URL *</label>
                 <input 
                   type="text" name="slug" required value={formData.slug} onChange={handleChange}
-                  className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" 
+                  className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors font-mono" 
                 />
               </div>
             </div>
@@ -108,39 +111,46 @@ export default function ProjectForm({ initialData }: { initialData?: any }) {
               />
             </div>
 
+            {/* Rich Text Editor for Content */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">Konten Studi Kasus (HTML)</label>
-              <textarea 
-                name="content" value={formData.content} onChange={handleChange} rows={6}
-                className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors font-mono text-sm" 
-                placeholder="<p>Latar belakang project...</p>" 
+              <label className="block text-sm font-medium text-foreground mb-2 flex items-center gap-2">
+                <FileText className="w-4 h-4 text-primary" /> Konten Studi Kasus (Rich Text WYSIWYG)
+              </label>
+              <RichTextEditor
+                value={formData.content}
+                onChange={(val) => setFormData(prev => ({ ...prev, content: val }))}
+                placeholder="Tulis latar belakang, tantangan, dan solusi project di sini..."
+                minHeight="280px"
               />
             </div>
             
+            {/* Interactive Tag Input for Tech Stack */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1 flex items-center gap-2">
-                <Code className="w-4 h-4 text-primary" /> Tech Stack (JSON Array)
-              </label>
-              <input 
-                type="text" name="techStack" value={formData.techStack} onChange={handleChange}
-                className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors font-mono text-sm" 
-                placeholder='["React", "Node.js", "MongoDB"]'
+              <TagInput
+                label="Tech Stack"
+                value={formData.techStack}
+                onChange={(val) => setFormData(prev => ({ ...prev, techStack: val }))}
+                placeholder="Ketik teknologi (misal: Next.js, PostgreSQL) lalu tekan Enter..."
+                helperText="Teknologi yang digunakan dalam pembangunan project ini."
               />
             </div>
           </div>
 
+          {/* Media Upload */}
           <div className="space-y-4 pt-4">
             <h3 className="text-lg font-bold border-b border-border pb-2 flex items-center gap-2 text-foreground">
-              <ImageIcon className="w-5 h-5 text-primary" /> Media
+              <ImageIcon className="w-5 h-5 text-primary" /> Screenshots & Galeri Portfolio
             </h3>
             
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">Screenshots (JSON Array URL)</label>
-              <input 
-                type="text" name="screenshots" value={formData.screenshots} onChange={handleChange}
-                className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors font-mono text-sm" 
+              <FileUpload
+                label="Upload Screenshots"
+                multiple={true}
+                accept="image/*"
+                value={formData.screenshots}
+                onChange={(val) => setFormData(prev => ({ ...prev, screenshots: val }))}
+                helperText="Drag & drop tangkapan layar project (gambar pertama akan menjadi cover)."
               />
-              <p className="text-xs text-muted mt-1">Gambar pertama akan menjadi thumbnail utama.</p>
             </div>
           </div>
         </div>
@@ -172,7 +182,7 @@ export default function ProjectForm({ initialData }: { initialData?: any }) {
           <div className="bg-background border border-border rounded-lg p-5">
             <h3 className="text-sm font-bold uppercase tracking-wider text-muted mb-4 border-b border-border pb-2">Aksi</h3>
             
-            <button type="submit" disabled={loading} className="btn-primary w-full flex items-center justify-center gap-2 py-3 mb-3">
+            <button type="submit" disabled={loading} className="btn-primary w-full flex items-center justify-center gap-2 py-3 mb-3 cursor-pointer">
               {loading ? <span className="animate-pulse">Menyimpan...</span> : <><Save className="w-4 h-4" /> {isEdit ? 'Simpan Perubahan' : 'Buat Project'}</>}
             </button>
             

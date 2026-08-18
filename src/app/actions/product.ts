@@ -16,6 +16,7 @@ function productInput(data: Record<string, unknown>) {
     title, slug, price, ...(typeof data.categoryId === "string" ? { categoryId: data.categoryId } : {}),
     description: typeof data.description === "string" ? data.description.slice(0, 5000) : "",
     content: sanitizeRichText(data.content), version: typeof data.version === "string" ? data.version.slice(0, 40) : "",
+    filePath: typeof data.filePath === "string" ? data.filePath.slice(0, 500) : null,
     published: data.published === true, featured: data.featured === true,
     screenshots: typeof data.screenshots === "string" ? data.screenshots.slice(0, 10000) : "[]",
     demoLinks: typeof data.demoLinks === "string" ? data.demoLinks.slice(0, 10000) : "[]",

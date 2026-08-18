@@ -4,6 +4,9 @@ import { useState } from "react";
 import { Save, Settings2, Image as ImageIcon, MessageSquare, Phone, MapPin, AlignLeft, Layout, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { saveSettings } from "@/app/actions/setting";
+import RichTextEditor from "@/components/admin/RichTextEditor";
+import FileUpload from "@/components/admin/FileUpload";
+import TagInput from "@/components/admin/TagInput";
 
 export default function SettingsForm({ initialData }: { initialData: Record<string, string> }) {
   const router = useRouter();
@@ -54,9 +57,9 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 type="button"
-                className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-md transition-all duration-300 ${
+                className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-md transition-all duration-300 cursor-pointer ${
                   activeTab === tab.id 
-                    ? 'bg-primary/10 text-primary border border-primary/20 shadow-sm' 
+                    ? 'bg-primary/10 text-primary border border-primary/20 shadow-sm font-bold' 
                     : 'text-muted hover:text-foreground hover:bg-background'
                 }`}
               >
@@ -71,13 +74,13 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
       <div className="flex-1">
         <form onSubmit={handleSubmit} className="bg-card border border-border rounded-lg p-6 lg:p-8 custom-shadow transition-colors duration-300">
           {error && (
-            <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-md mb-6">
+            <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-md mb-6 font-mono text-sm">
               {error}
             </div>
           )}
           
           {/* GENERAL TAB */}
-          <div className={activeTab === 'general' ? 'block' : 'hidden'}>
+          <div className={activeTab === 'general' ? 'block space-y-6' : 'hidden'}>
             <h2 className="text-xl font-bold text-foreground mb-6 border-b border-border pb-4 flex items-center gap-2">
               <Settings2 className="w-5 h-5 text-primary" /> Pengaturan Umum
             </h2>
@@ -97,17 +100,20 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1">Logo URL (PNG/SVG)</label>
-                <input 
-                  type="text" name="site_logo" value={formData.site_logo || "/asset/logorayan.png"} onChange={handleChange}
-                  className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-foreground focus:ring-1 focus:ring-primary transition-colors font-mono text-sm" 
+                <FileUpload
+                  label="Logo Website (Upload Gambar PNG/SVG/WEBP)"
+                  multiple={false}
+                  accept="image/*"
+                  value={formData.site_logo || "/asset/logorayan.png"}
+                  onChange={(val) => setFormData(prev => ({ ...prev, site_logo: val }))}
+                  helperText="Upload file logo resmi studio."
                 />
               </div>
             </div>
           </div>
 
           {/* HERO TAB */}
-          <div className={activeTab === 'hero' ? 'block' : 'hidden'}>
+          <div className={activeTab === 'hero' ? 'block space-y-6' : 'hidden'}>
             <h2 className="text-xl font-bold text-foreground mb-6 border-b border-border pb-4 flex items-center gap-2">
               <Layout className="w-5 h-5 text-primary" /> Hero Banner (Beranda)
             </h2>
@@ -116,21 +122,22 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
                 <label className="block text-sm font-medium text-foreground mb-1">Headline Utama</label>
                 <input 
                   type="text" name="hero_title" value={formData.hero_title || ""} onChange={handleChange}
-                  className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-foreground focus:ring-1 focus:ring-primary transition-colors" 
+                  className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-foreground focus:ring-1 focus:ring-primary transition-colors font-bold text-lg" 
+                  placeholder="BUILD. BUY. GROW."
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Sub-Headline (Deskripsi Bawah Headline)</label>
                 <textarea 
                   name="hero_subtitle" value={formData.hero_subtitle || ""} onChange={handleChange} rows={4}
-                  className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-foreground focus:ring-1 focus:ring-primary transition-colors" 
+                  className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-foreground focus:ring-1 focus:ring-primary transition-colors leading-relaxed" 
                 />
               </div>
             </div>
           </div>
 
           {/* CONTACT TAB */}
-          <div className={activeTab === 'contact' ? 'block' : 'hidden'}>
+          <div className={activeTab === 'contact' ? 'block space-y-6' : 'hidden'}>
             <h2 className="text-xl font-bold text-foreground mb-6 border-b border-border pb-4 flex items-center gap-2">
               <Phone className="w-5 h-5 text-primary" /> Kontak & Sosial Media
             </h2>
@@ -140,10 +147,10 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
                   <label className="block text-sm font-medium text-foreground mb-1">Nomor WhatsApp Admin</label>
                   <input 
                     type="text" name="whatsapp_number" value={formData.whatsapp_number || ""} onChange={handleChange}
-                    className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-foreground focus:ring-1 focus:ring-primary transition-colors" 
+                    className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-foreground focus:ring-1 focus:ring-primary transition-colors font-mono" 
                     placeholder="Contoh: 6281234567890"
                   />
-                  <p className="text-xs text-muted mt-1">Gunakan format 62 tanpa spasi atau plus.</p>
+                  <p className="text-xs text-muted mt-1">Gunakan format 62 tanpa spasi atau tanda plus (+).</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-1">Email Publik</label>
@@ -174,31 +181,36 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
           </div>
 
           {/* ABOUT TAB */}
-          <div className={activeTab === 'about' ? 'block' : 'hidden'}>
+          <div className={activeTab === 'about' ? 'block space-y-6' : 'hidden'}>
             <h2 className="text-xl font-bold text-foreground mb-6 border-b border-border pb-4 flex items-center gap-2">
               <AlignLeft className="w-5 h-5 text-primary" /> Konten Halaman About
             </h2>
-            <div className="space-y-5">
+            <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1">Cerita / Latar Belakang Perusahaan</label>
-                <textarea 
-                  name="about_story" value={formData.about_story || ""} onChange={handleChange} rows={4}
-                  className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-foreground focus:ring-1 focus:ring-primary transition-colors" 
+                <label className="block text-sm font-medium text-foreground mb-2">Cerita / Latar Belakang Perusahaan (Rich Text)</label>
+                <RichTextEditor
+                  value={formData.about_story || ""}
+                  onChange={(val) => setFormData(prev => ({ ...prev, about_story: val }))}
+                  placeholder="Tuliskan latar belakang dan narasi studio..."
+                  minHeight="200px"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1">Visi</label>
-                <textarea 
-                  name="about_vision" value={formData.about_vision || ""} onChange={handleChange} rows={3}
-                  className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-foreground focus:ring-1 focus:ring-primary transition-colors" 
+                <label className="block text-sm font-medium text-foreground mb-2">Visi Perusahaan</label>
+                <RichTextEditor
+                  value={formData.about_vision || ""}
+                  onChange={(val) => setFormData(prev => ({ ...prev, about_vision: val }))}
+                  placeholder="Tuliskan visi perusahaan..."
+                  minHeight="140px"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1">Misi (JSON Array String)</label>
-                <textarea 
-                  name="about_mission" value={formData.about_mission || ""} onChange={handleChange} rows={4}
-                  className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-foreground focus:ring-1 focus:ring-primary transition-colors font-mono text-sm" 
-                  placeholder='["Misi pertama", "Misi kedua"]'
+                <TagInput
+                  label="Daftar Misi Perusahaan"
+                  value={formData.about_mission || "[]"}
+                  onChange={(val) => setFormData(prev => ({ ...prev, about_mission: val }))}
+                  placeholder="Ketik butir misi lalu tekan Enter..."
+                  helperText="Daftar pilar misi yang dijalankan oleh studio."
                 />
               </div>
             </div>
@@ -206,7 +218,7 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
 
           {/* Submit Button */}
           <div className="mt-8 pt-6 border-t border-border flex justify-end">
-            <button type="submit" disabled={loading} className="btn-primary w-full md:w-auto px-10">
+            <button type="submit" disabled={loading} className="btn-primary w-full md:w-auto px-10 cursor-pointer">
               {loading ? <span className="animate-pulse">Menyimpan...</span> : <><Save className="w-4 h-4" /> Simpan Pengaturan</>}
             </button>
           </div>
