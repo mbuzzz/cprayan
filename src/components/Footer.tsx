@@ -116,10 +116,10 @@ export default function Footer() {
           <ul className="flex flex-col space-y-2.5 text-xs sm:text-sm font-medium">
             <li>
               <a
-                href="mailto:contact@rayan.web.id"
+                href="mailto:contact@rayansmartkreatif.id"
                 className="inline-block text-muted hover:text-primary hover:translate-x-1.5 rtl:hover:-translate-x-1.5 transition-all duration-200"
               >
-                contact@rayan.web.id
+                contact@rayansmartkreatif.id
               </a>
             </li>
             <li>

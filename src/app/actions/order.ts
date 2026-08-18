@@ -5,6 +5,22 @@ import { revalidatePath } from "next/cache";
 import crypto from "crypto";
 import { requireAdmin } from "@/lib/require-admin";
 import { createSumopodPayment } from "@/lib/sumopod";
+import { sendOrderDeliveryEmail } from "@/lib/email";
+
+async function notifyOrderDelivery(orderId: string) {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: { items: { include: { product: true } } },
+  });
+  if (!order || order.orderStatus !== "COMPLETED" || order.deliveryEmailSentAt) return;
+  const result = await sendOrderDeliveryEmail(order);
+  if (result.success) {
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { deliveryEmailSentAt: new Date(), deliveryEmailMessageId: result.messageId || null },
+    });
+  }
+}
 
 function customerInput(data: { name: string; email: string; phone: string }) {
   const name = typeof data.name === "string" ? data.name.trim() : "";
@@ -262,6 +278,7 @@ export async function verifyOrder(orderId: string) {
         }
       });
     }
+    await notifyOrderDelivery(orderId);
     
     revalidatePath("/admin/orders");
     revalidatePath(`/admin/orders/${orderId}`);
@@ -281,6 +298,7 @@ export async function completeOrder(orderId: string) {
         paymentStatus: 'PAID',
       }
     });
+    await notifyOrderDelivery(orderId);
     revalidatePath("/admin/orders");
     revalidatePath(`/admin/orders/${orderId}`);
     return { success: true };

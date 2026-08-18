@@ -18,7 +18,7 @@ export async function getSmtpTransporter() {
   let user = process.env.SMTP_USER || "";
   let pass = process.env.SMTP_PASS || process.env.SMTP_PASSWORD || "";
   let secure = process.env.SMTP_SECURE === "true" || port === 465;
-  let from = process.env.SMTP_FROM || "PT. Rayan Smart Kreatif <noreply@rayan.web.id>";
+  let from = process.env.SMTP_FROM || "PT. Rayan Smart Kreatif <noreply@rayansmartkreatif.id>";
 
   try {
     const settings = await prisma.siteSetting.findMany({
@@ -210,5 +210,23 @@ export async function sendContactNotificationToAdmin(adminEmail: string, data: {
     to: adminEmail,
     subject: `[Kontak Baru] ${data.subject || data.name} - PT. Rayan Smart Kreatif`,
     html,
+  });
+}
+
+export async function sendOrderDeliveryEmail(order: any) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://rayansmartkreatif.id";
+  const trackUrl = `${appUrl}/track-order?order=${encodeURIComponent(order.orderNumber)}&email=${encodeURIComponent(order.customerEmail)}`;
+  const items = (order.items || []).map((item: any) => {
+    const productName = item.productName || item.product?.title || "Produk digital";
+    const downloadUrl = item.downloadToken && item.product?.filePath
+      ? `${appUrl}/api/download/${encodeURIComponent(item.downloadToken)}`
+      : null;
+    return `<li style="margin:8px 0"><strong>${productName}</strong>${downloadUrl ? ` — <a href="${downloadUrl}">Buka produk</a>` : " — instruksi aktivasi akan dikirim melalui email ini."}</li>`;
+  }).join("");
+  return sendEmail({
+    to: order.customerEmail,
+    subject: `Pesanan ${order.orderNumber} berhasil - PT. Rayan Smart Kreatif`,
+    html: `<div style="font-family:Arial,sans-serif;line-height:1.6"><h2>Pesanan berhasil diverifikasi</h2><p>Halo ${order.customerName}, pembayaran untuk pesanan <strong>${order.orderNumber}</strong> sudah diverifikasi.</p><ul>${items}</ul><p>Lacak status pesanan: <a href="${trackUrl}">${trackUrl}</a></p><p>Jika produk berupa subscription, instruksi aktivasi akan diproses ke email ini.</p></div>`,
+    text: `Pesanan ${order.orderNumber} berhasil diverifikasi. Lacak pesanan: ${trackUrl}`,
   });
 }

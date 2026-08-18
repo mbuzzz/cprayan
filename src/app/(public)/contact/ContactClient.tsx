@@ -17,7 +17,7 @@ export default function ContactClient({ settings }: { settings: Record<string, s
   const [error, setError] = useState("");
 
   const address = settings.contact_address || "Gedung Perkantoran Sudirman, Lt. 12\nJl. Jend. Sudirman Kav. 1, Jakarta Pusat, 10220";
-  const email = settings.contact_email || "contact@rayan.web.id";
+  const email = settings.contact_email || "contact@rayansmartkreatif.id";
   const rawPhone = settings.whatsapp_number || "6285226117387";
   const hours = settings.contact_hours || "Senin - Jumat: 09:00 - 18:00 WIB";
   const mapsEmbed = settings.contact_maps_embed || "";

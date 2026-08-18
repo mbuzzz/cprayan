@@ -180,7 +180,7 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
                 <div>
                   <label className="block text-xs uppercase font-bold text-foreground mb-1.5 font-mono">Email Publik / Support</label>
                   <input 
-                    type="email" name="contact_email" value={formData.contact_email || "contact@rayan.web.id"} onChange={handleChange}
+                    type="email" name="contact_email" value={formData.contact_email || "contact@rayansmartkreatif.id"} onChange={handleChange}
                     className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors font-mono" 
                   />
                 </div>
@@ -190,9 +190,9 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
                 <div>
                   <label className="block text-xs uppercase font-bold text-foreground mb-1.5 font-mono">Email Tujuan Notifikasi Pesan Masuk</label>
                   <input 
-                    type="email" name="contact_notification_email" value={formData.contact_notification_email || "contact@rayan.web.id"} onChange={handleChange}
+                    type="email" name="contact_notification_email" value={formData.contact_notification_email || "admin@rayansmartkreatif.id"} onChange={handleChange}
                     className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors font-mono" 
-                    placeholder="admin@rayan.web.id"
+                    placeholder="admin@rayansmartkreatif.id"
                   />
                   <p className="text-[10px] text-muted mt-1 font-mono">Email admin yang akan menerima kiriman pesan form kontak.</p>
                 </div>

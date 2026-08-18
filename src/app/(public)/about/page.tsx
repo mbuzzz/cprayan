@@ -15,7 +15,7 @@ export default async function AboutPage() {
 
   const story = getSetting('about_story', 'PT. Rayan Smart Kreatif didirikan dengan semangat untuk menghadirkan solusi digital yang tidak hanya cerdas, tetapi juga memiliki nilai estetika premium dan profesionalitas tinggi.');
   const vision = getSetting('about_vision', 'Menjadi perusahaan teknologi digital terdepan di Indonesia yang dikenal karena inovasi cerdas, kualitas desain premium, dan solusi yang memberdayaan bisnis untuk bersaing secara global.');
-  const email = getSetting('contact_email', 'contact@rayan.web.id');
+  const email = getSetting('contact_email', 'contact@rayansmartkreatif.id');
   const whatsapp = getSetting('whatsapp_number', '6281234567890');
   const address = getSetting('contact_address', 'Jakarta, Indonesia');
   

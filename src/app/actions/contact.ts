@@ -44,7 +44,7 @@ export async function submitContactMessage(formData: {
     const adminEmailSetting = await prisma.siteSetting.findUnique({
       where: { key: "contact_notification_email" },
     });
-    const destinationEmail = adminEmailSetting?.value || process.env.ADMIN_EMAIL || "contact@rayan.web.id";
+    const destinationEmail = adminEmailSetting?.value || process.env.ADMIN_EMAIL || "admin@rayansmartkreatif.id";
 
     // Dispatch email notification via SMTP
     await sendContactNotificationToAdmin(destinationEmail, {

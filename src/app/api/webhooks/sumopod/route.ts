@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
+import { sendOrderDeliveryEmail } from "@/lib/email";
 
 /**
  * Verifikasi signature Svix resmi dari Sumopod Payment Gateway
@@ -99,7 +100,7 @@ export async function POST(request: NextRequest) {
           { id: orderId }
         ]
       },
-      include: { items: true }
+      include: { items: { include: { product: true } } },
     });
 
     if (!order) {
@@ -122,6 +123,16 @@ export async function POST(request: NextRequest) {
           gatewayResponse: JSON.stringify(body),
         }
       });
+
+      if (!order.deliveryEmailSentAt) {
+        const delivery = await sendOrderDeliveryEmail(order);
+        if (delivery.success) {
+          await prisma.order.update({
+            where: { id: order.id },
+            data: { deliveryEmailSentAt: new Date(), deliveryEmailMessageId: delivery.messageId || null },
+          });
+        }
+      }
 
       // Catat riwayat verifikasi jika belum tercatat
       const existingVerification = await prisma.paymentVerification.findFirst({

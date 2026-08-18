@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # 1. PostgreSQL Database Service
   db:
-    image: postgres:16-alpine
+    image: postgres:15-alpine
     container_name: rayanweb-db
     restart: always
     environment:
@@ -22,7 +22,7 @@ services:
 
   # 2. PgBouncer Connection Pooler (High Concurrency & Low Latency)
   pgbouncer:
-    image: edoburu/pgbouncer:v1.22.1
+    image: edoburu/pgbouncer:v1.24.1-p1
     container_name: rayanweb-pgbouncer
     restart: always
     environment:
@@ -37,9 +37,7 @@ services:
       MIN_POOL_SIZE: 10
       RESERVE_POOL_SIZE: 5
       SERVER_RESET_QUERY: "DISCARD ALL"
-      AUTH_TYPE: md5
-    ports:
-      - "6432:6432"
+      AUTH_TYPE: scram-sha-256
     depends_on:
       db:
         condition: service_healthy
@@ -62,7 +60,7 @@ services:
     environment:
       NODE_ENV: production
       # Direct connection via PgBouncer with pgbouncer=true parameter for Prisma
-      DATABASE_URL: postgresql://${POSTGRES_USER:-rayan}:${POSTGRES_PASSWORD:-rayan_secure_password_2026}@pgbouncer:6432/${POSTGRES_DB:-rayanweb}?pgbouncer=true&schema=public
+      DATABASE_URL: postgresql://${POSTGRES_USER:-rayan}:${POSTGRES_PASSWORD:-rayan_secure_password_2026}@pgbouncer:5432/${POSTGRES_DB:-rayanweb}?pgbouncer=true&schema=public
       DIRECT_URL: postgresql://${POSTGRES_USER:-rayan}:${POSTGRES_PASSWORD:-rayan_secure_password_2026}@db:5432/${POSTGRES_DB:-rayanweb}?schema=public
     networks:
       - rayan-network

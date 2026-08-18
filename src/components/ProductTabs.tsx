@@ -7,6 +7,13 @@ import ReviewForm from "@/components/ReviewForm";
 
 export default function ProductTabs({ product, reviews }: { product: any, reviews: any[] }) {
   const [activeTab, setActiveTab] = useState("details");
+  const isSubscription = /gemini|google ai|drive/i.test(product.title || "");
+  const features = isSubscription
+    ? ["Masa aktif 18 bulan", "Invite Family", "Aktivasi setelah pembayaran diverifikasi", "Dukungan proses aktivasi"]
+    : ["Clean Code & Well Documented", "Responsive Design", "Easy to Customize", "Free Lifetime Updates"];
+  const deliverables = isSubscription
+    ? ["Akses Gemini AI Pro sesuai masa aktif", "Proses invite ke family", "Panduan aktivasi"]
+    : ["Full Source Code (.zip)", "Database SQL", "Dokumentasi Lengkap (PDF/HTML)"];
 
   const renderStars = (rating: number) => {
     return (
@@ -51,7 +58,7 @@ export default function ProductTabs({ product, reviews }: { product: any, review
 
             <h4 className="text-lg font-bold mt-8 mb-4 text-foreground">Fitur Utama</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-              {["Clean Code & Well Documented", "Responsive Design", "Easy to Customize", "Free Lifetime Updates"].map((feature, i) => (
+              {features.map((feature: string, i: number) => (
                 <div key={i} className="flex items-start gap-3">
                   <div className="mt-1 w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <Check className="w-3 h-3 text-primary" />
@@ -63,9 +70,9 @@ export default function ProductTabs({ product, reviews }: { product: any, review
 
             <h4 className="text-lg font-bold mt-8 mb-4 text-foreground">Apa yang Anda Dapatkan?</h4>
             <div className="space-y-3 bg-background p-6 rounded-lg border border-border">
-              <div className="flex items-center gap-3 text-muted"><FileCode className="w-5 h-5 text-primary" /> Full Source Code (.zip)</div>
-              <div className="flex items-center gap-3 text-muted"><FileCode className="w-5 h-5 text-primary" /> Database SQL</div>
-              <div className="flex items-center gap-3 text-muted"><FileCode className="w-5 h-5 text-primary" /> Dokumentasi Lengkap (PDF/HTML)</div>
+              {deliverables.map((item: string) => (
+                <div key={item} className="flex items-center gap-3 text-muted"><FileCode className="w-5 h-5 text-primary" /> {item}</div>
+              ))}
             </div>
           </div>
         )}

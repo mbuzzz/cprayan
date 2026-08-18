@@ -51,7 +51,7 @@ Secara default, mode lokal menggunakan SQLite sehingga Anda tidak memerlukan ins
    - Halaman Publik: `http://localhost:3000`
    - Panel Admin: `http://localhost:3000/admin`
    - Kredensial Admin Default:
-     - **Email**: `admin@rayan.web.id`
+     - **Email**: `admin@rayansmartkreatif.id`
      - **Password**: `@r4y4N.W3b`
 
 ---
