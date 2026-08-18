@@ -1,32 +1,76 @@
 version: '3.8'
 
 services:
+  # 1. PostgreSQL Database Service
+  db:
+    image: postgres:16-alpine
+    container_name: rayanweb-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-rayan}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rayan_secure_password_2026}
+      POSTGRES_DB: ${POSTGRES_DB:-rayanweb}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-rayan} -d ${POSTGRES_DB:-rayanweb}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rayan-network
+
+  # 2. PgBouncer Connection Pooler (High Concurrency & Low Latency)
+  pgbouncer:
+    image: edoburu/pgbouncer:v1.22.1
+    container_name: rayanweb-pgbouncer
+    restart: always
+    environment:
+      DB_USER: ${POSTGRES_USER:-rayan}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-rayan_secure_password_2026}
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_NAME: ${POSTGRES_DB:-rayanweb}
+      POOL_MODE: transaction
+      MAX_CLIENT_CONN: 1000
+      DEFAULT_POOL_SIZE: 50
+      MIN_POOL_SIZE: 10
+      RESERVE_POOL_SIZE: 5
+      SERVER_RESET_QUERY: "DISCARD ALL"
+      AUTH_TYPE: md5
+    ports:
+      - "6432:6432"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - rayan-network
+
+  # 3. Next.js Web Application Container
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: rayanweb-app
     restart: always
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      - pgbouncer
     env_file:
       - .env.production
     environment:
-      # Override the DATABASE_URL to use the postgres container
-      - DATABASE_URL=postgresql://rayan:rayan_secure_password@db:5432/rayanweb?schema=public
+      NODE_ENV: production
+      # Direct connection via PgBouncer with pgbouncer=true parameter for Prisma
+      DATABASE_URL: postgresql://${POSTGRES_USER:-rayan}:${POSTGRES_PASSWORD:-rayan_secure_password_2026}@pgbouncer:6432/${POSTGRES_DB:-rayanweb}?pgbouncer=true&schema=public
+      DIRECT_URL: postgresql://${POSTGRES_USER:-rayan}:${POSTGRES_PASSWORD:-rayan_secure_password_2026}@db:5432/${POSTGRES_DB:-rayanweb}?schema=public
+    networks:
+      - rayan-network
 
-  db:
-    image: postgres:15-alpine
-    container_name: rayanweb-db
-    restart: always
-    environment:
-      - POSTGRES_USER=rayan
-      - POSTGRES_PASSWORD=rayan_secure_password
-      - POSTGRES_DB=rayanweb
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+networks:
+  rayan-network:
+    driver: bridge
 
 volumes:
   postgres_data:
+    driver: local
