@@ -22,6 +22,16 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "PT. Rayan Smart Kreatif - Build. Buy. Grow.",
   description: "Premium digital products and bespoke engineering for ambitious brands. A unified ecosystem for creation and scale.",
+  icons: {
+    icon: [
+      { url: "/asset/logorayan.png", type: "image/png" },
+      { url: "/favicon.ico" },
+    ],
+    shortcut: ["/asset/logorayan.png"],
+    apple: [
+      { url: "/asset/logorayan.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
 };
 
 export default function RootLayout({
