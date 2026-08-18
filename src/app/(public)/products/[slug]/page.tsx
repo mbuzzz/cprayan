@@ -352,15 +352,15 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
               </div>
               
               {/* Action Buttons */}
-              <div className="space-y-3 pt-2">
-                <AddToCartButton product={productForCart} variant="detail" />
-                
+              <div className="space-y-2.5 pt-2">
                 <Link 
                   href={`/checkout?product=${product.id}`} 
-                  className="btn-primary w-full py-3.5 text-center block text-xs uppercase font-bold tracking-wider rounded-xl shadow-lg hover:opacity-95 transition-opacity"
+                  className="btn-primary w-full py-3 text-center block text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg hover:opacity-95 transition-opacity"
                 >
-                  Beli & Unduh Sekarang
+                  Beli Sekarang
                 </Link>
+
+                <AddToCartButton product={productForCart} variant="detail" />
               </div>
               
               <p className="text-[11px] text-center text-muted font-mono">

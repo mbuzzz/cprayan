@@ -42,8 +42,11 @@ export default async function Home() {
   try {
     projects = await prisma.project.findMany({
       where: { published: true },
-      take: 3,
-      orderBy: { createdAt: "desc" },
+      take: 6,
+      orderBy: [
+        { featured: "desc" },
+        { createdAt: "desc" }
+      ],
     });
     featuredProject = projects.find((p) => p.featured) || projects[0] || null;
   } catch (e) {

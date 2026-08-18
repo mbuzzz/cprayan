@@ -53,15 +53,16 @@ export default function AddToCartButton({
     }, 1800);
   };
 
+  // 1. Icon variant (Sleek square button with tooltip)
   if (variant === "icon") {
     return (
       <button
         onClick={handleAdd}
         type="button"
-        className={`p-2.5 rounded-lg border transition-all duration-200 cursor-pointer flex items-center justify-center ${
+        className={`w-9 h-9 rounded-lg border transition-all duration-200 cursor-pointer flex items-center justify-center flex-shrink-0 ${
           added
-            ? "bg-green-500/20 text-green-500 border-green-500/40"
-            : "bg-surface border-border text-foreground hover:border-primary hover:text-primary hover:bg-primary/10"
+            ? "bg-emerald-500/20 text-emerald-500 border-emerald-500/40"
+            : "bg-surface border-border text-muted hover:border-primary hover:text-primary hover:bg-primary/10"
         } ${className}`}
         title={added ? "Tersimpan di Keranjang" : "Tambah ke Keranjang"}
       >
@@ -70,51 +71,53 @@ export default function AddToCartButton({
     );
   }
 
+  // 2. Detail variant (Sidebar purchase button)
   if (variant === "detail") {
     return (
       <button
         onClick={handleAdd}
         type="button"
-        className={`w-full py-3.5 px-6 rounded-xl font-heading font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2.5 transition-all duration-300 cursor-pointer shadow-md ${
+        className={`w-full py-3 px-5 rounded-xl font-medium text-xs flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer border ${
           added
-            ? "bg-green-600 text-white shadow-[0_0_20px_rgba(34,197,94,0.35)]"
-            : "border-2 border-primary text-primary hover:bg-primary hover:text-on-primary hover:shadow-[0_0_20px_rgba(242,202,80,0.3)] hover:-translate-y-0.5"
+            ? "bg-emerald-600/20 text-emerald-500 border-emerald-500/40"
+            : "border-border bg-surface text-foreground hover:border-primary hover:text-primary hover:bg-primary/5"
         } ${className}`}
       >
         {added ? (
           <>
-            <Check className="w-4 h-4 text-white animate-in zoom-in" />
-            <span>Berhasil Ditambahkan!</span>
+            <Check className="w-4 h-4 text-emerald-500 animate-in zoom-in" />
+            <span className="font-semibold text-emerald-500">Tersimpan di Keranjang</span>
           </>
         ) : (
           <>
-            <ShoppingCart className="w-4 h-4" />
-            <span>Tambah ke Keranjang</span>
+            <ShoppingCart className="w-4 h-4 text-primary" />
+            <span className="font-semibold">+ Tambah ke Keranjang</span>
           </>
         )}
       </button>
     );
   }
 
-  // Default "card" variant
+  // 3. Card variant (Compact, balanced card button)
   return (
     <button
       onClick={handleAdd}
       type="button"
-      className={`w-full py-2 px-3 rounded-lg text-xs font-mono uppercase font-bold flex items-center justify-center gap-1.5 transition-all duration-200 cursor-pointer ${
+      className={`py-1.5 px-3 rounded-lg text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all duration-200 cursor-pointer border ${
         added
-          ? "bg-green-500/20 text-green-500 border border-green-500/40"
-          : "bg-primary text-black hover:opacity-90 shadow-sm"
+          ? "bg-emerald-500/20 text-emerald-500 border-emerald-500/40"
+          : "bg-surface border-border text-foreground hover:border-primary hover:text-primary hover:bg-primary/10"
       } ${className}`}
+      title={added ? "Tersimpan di Keranjang" : "Tambah ke Keranjang"}
     >
       {added ? (
         <>
-          <Check className="w-3.5 h-3.5 animate-in zoom-in" />
-          <span>Ditambahkan</span>
+          <Check className="w-3.5 h-3.5 text-emerald-500 animate-in zoom-in" />
+          <span>Tersimpan</span>
         </>
       ) : (
         <>
-          <ShoppingCart className="w-3.5 h-3.5" />
+          <ShoppingCart className="w-3.5 h-3.5 text-primary" />
           <span>+ Keranjang</span>
         </>
       )}

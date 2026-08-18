@@ -63,3 +63,51 @@ export async function deleteProject(id: string) {
     return { success: false, error: error.message };
   }
 }
+
+export async function toggleFeaturedProject(id: string) {
+  if (!await requireAdmin()) return { success: false, error: "Unauthorized" };
+  try {
+    const current = await prisma.project.findUnique({
+      where: { id },
+      select: { featured: true },
+    });
+    if (!current) throw new Error("Project tidak ditemukan");
+
+    const updated = await prisma.project.update({
+      where: { id },
+      data: { featured: !current.featured },
+    });
+
+    revalidatePath("/admin/projects");
+    revalidatePath("/projects");
+    revalidatePath("/");
+
+    return { success: true, featured: updated.featured };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function togglePublishedProject(id: string) {
+  if (!await requireAdmin()) return { success: false, error: "Unauthorized" };
+  try {
+    const current = await prisma.project.findUnique({
+      where: { id },
+      select: { published: true },
+    });
+    if (!current) throw new Error("Project tidak ditemukan");
+
+    const updated = await prisma.project.update({
+      where: { id },
+      data: { published: !current.published },
+    });
+
+    revalidatePath("/admin/projects");
+    revalidatePath("/projects");
+    revalidatePath("/");
+
+    return { success: true, published: updated.published };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}

@@ -328,16 +328,15 @@ export default async function ProductsPage({
                           </div>
                         </div>
 
-                        <div className="flex gap-2">
+                        <div className="flex items-center gap-2 pt-1">
                           <Link 
                             href={`/products/${product.slug}`} 
-                            className="flex-1 py-2 text-center text-xs font-mono uppercase font-bold border border-border text-foreground rounded-lg hover:border-primary hover:text-primary hover:bg-surface transition-all"
+                            className="flex-1 py-2 px-3 text-center text-xs font-semibold rounded-lg bg-surface border border-border text-foreground hover:border-primary hover:text-primary transition-all flex items-center justify-center gap-1.5"
                           >
-                            Detail
+                            <span>Lihat Detail</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
                           </Link>
-                          <div className="flex-1">
-                            <AddToCartButton product={product} variant="card" />
-                          </div>
+                          <AddToCartButton product={product} variant="icon" />
                         </div>
                       </div>
                     </div>
