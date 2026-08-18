@@ -1,7 +1,35 @@
 @import "tailwindcss";
 
 :root {
-  /* Aureum Precision - Dark Theme System */
+  /* Aureum Precision - Refined Light Mode (Ivory & Gold Luxury) */
+  --background: #fbfbfa;
+  --foreground: #141413;
+  --surface: #ffffff;
+  --surface-dim: #f3f3f0;
+  --surface-bright: #ffffff;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f9f9f8;
+  --surface-container: #ffffff;
+  --surface-container-high: #f0f0ed;
+  --surface-container-highest: #e6e6e2;
+  --on-surface: #141413;
+  --on-surface-variant: #5c584e;
+  --outline: #9c9789;
+  --outline-variant: #e0dcd1;
+  --primary: #b38b14;
+  --primary-gold: #c6a15b;
+  --on-primary: #ffffff;
+  --primary-container: #faecc4;
+  --secondary: #6e6754;
+  --secondary-container: #ebe6d5;
+  --muted: #6b685e;
+  --card: #ffffff;
+  --card-border: rgba(179, 139, 20, 0.18);
+  --border: rgba(0, 0, 0, 0.08);
+}
+
+.dark {
+  /* Aureum Precision - Dark Mode (Obsidian & Aureum Gold) */
   --background: #080808;
   --foreground: #e3e2e2;
   --surface: #121414;
@@ -28,14 +56,19 @@
   --border: rgba(77, 70, 53, 0.25);
 }
 
-.dark {
-  --background: #080808;
-  --foreground: #e3e2e2;
-  --surface: #121414;
-  --primary: #f2ca50;
-  --card: #121414;
-  --card-border: rgba(77, 70, 53, 0.35);
-  --border: rgba(77, 70, 53, 0.25);
+/* RTL Typography & Direction */
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"] .font-mono {
+  font-family: var(--font-sans), monospace;
+}
+
+[dir="rtl"] .ltr-only {
+  direction: ltr;
+  text-align: left;
 }
 
 @theme {

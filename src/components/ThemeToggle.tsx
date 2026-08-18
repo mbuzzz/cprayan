@@ -2,25 +2,38 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { Moon, Sun } from "lucide-react";
+import { Sun, Moon } from "lucide-react";
+import { useLanguage } from "./LanguageContext";
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) return <div className="w-9 h-9"></div>;
+  if (!mounted) {
+    return <div className="w-8 h-8 rounded-full border border-border/40 bg-card"></div>;
+  }
+
+  const isDark = resolvedTheme === "dark";
 
   return (
     <button
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/5 transition-colors text-gray-600 dark:text-gray-300 hover:text-primary flex items-center justify-center"
-      aria-label="Toggle Theme"
+      type="button"
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      title={isDark ? t.theme.toggleLight : t.theme.toggleDark}
+      className="w-8 h-8 rounded-full border border-border/50 bg-card flex items-center justify-center text-foreground hover:text-primary hover:border-primary transition-all duration-300 cursor-pointer shadow-sm"
     >
-      {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+      {isDark ? (
+        <Sun className="w-4 h-4 text-primary transition-transform duration-300 hover:rotate-45" />
+      ) : (
+        <Moon className="w-4 h-4 text-primary transition-transform duration-300 hover:-rotate-12" />
+      )}
     </button>
   );
 }
+
+export default ThemeToggle;
