@@ -165,6 +165,11 @@ model Order {
   total    Float
 
   paymentMethod   String   @default("manual_whatsapp")
+  paymentGateway  String?  @default("sumopod")
+  paymentId       String?
+  paymentUrl      String?
+  qrCodeUrl       String?
+  gatewayResponse String?
   paymentStatus   String   @default("PENDING")
   orderStatus     String   @default("PENDING")
   paymentDeadline DateTime
@@ -265,3 +270,22 @@ model Service {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model DevelopmentPackage {
+  id            String   @id @default(cuid())
+  name          String
+  slug          String   @unique
+  category      String   @default("Web Development") // Web Development, Mobile App, UI/UX Design, Custom SaaS
+  price         Float    @default(0)
+  originalPrice Float?
+  deliveryTime  String   @default("3-7 Hari Kerja")
+  revisionCount String   @default("3x Revisi")
+  description   String
+  features      String   @default("[]") // JSON stringified array of features
+  isPopular     Boolean  @default(false)
+  published     Boolean  @default(true)
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+

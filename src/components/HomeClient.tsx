@@ -27,6 +27,7 @@ interface HomeClientProps {
   featuredProject: any;
   projects?: any[];
   services: any[];
+  packages?: any[];
   settings: { key: string; value: string }[];
 }
 
@@ -36,6 +37,7 @@ export default function HomeClient({
   featuredProject,
   projects = [],
   services,
+  packages = [],
   settings,
 }: HomeClientProps) {
   const { t, isRtl } = useLanguage();
@@ -440,6 +442,121 @@ export default function HomeClient({
               </ul>
             </div>
           </div>
+
+          {/* Dynamic Development Packages Showcase if available */}
+          {packages && packages.length > 0 && (
+            <div className="space-y-8 pt-8 border-t border-border/60">
+              <div className="text-center space-y-2">
+                <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold">
+                  PILIHAN PAKET POPULER
+                </span>
+                <h3 className="font-heading text-2xl sm:text-3xl font-bold text-foreground">
+                  Paket Pengembangan Siap Pesan
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {packages.map((pkg) => {
+                  let featList: string[] = [];
+                  try {
+                    const parsed = JSON.parse(pkg.features);
+                    if (Array.isArray(parsed)) featList = parsed;
+                  } catch (e) {}
+
+                  const discount = pkg.originalPrice && pkg.originalPrice > pkg.price
+                    ? Math.round(((pkg.originalPrice - pkg.price) / pkg.originalPrice) * 100)
+                    : 0;
+
+                  const whatsappUrl = `https://wa.me/6285226117387?text=${encodeURIComponent(
+                    `Halo PT. Rayan Smart Kreatif, saya tertarik memesan paket development "${pkg.name}" (${pkg.category}). Mohon info proses dan konsultasinya.`
+                  )}`;
+
+                  return (
+                    <div
+                      key={pkg.id}
+                      className={`bg-card border rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group custom-shadow ${
+                        pkg.isPopular
+                          ? "border-primary shadow-[0_0_25px_rgba(242,202,80,0.15)] -translate-y-1.5"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      {pkg.isPopular && (
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-black text-[9px] font-mono font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider shadow">
+                          ★ Best Seller
+                        </div>
+                      )}
+
+                      <div className="space-y-4">
+                        <div>
+                          <span className="font-mono text-[10px] uppercase tracking-wider text-muted font-bold">
+                            {pkg.category}
+                          </span>
+                          <h4 className="font-heading text-lg font-bold text-foreground group-hover:text-primary transition-colors mt-0.5">
+                            {pkg.name}
+                          </h4>
+                          <p className="text-xs text-muted leading-relaxed line-clamp-2 mt-1">
+                            {pkg.description}
+                          </p>
+                        </div>
+
+                        <div className="pt-2 border-t border-border/50">
+                          {discount > 0 && pkg.originalPrice && (
+                            <div className="flex items-center gap-1.5 mb-0.5">
+                              <span className="line-through text-muted font-mono text-[11px]">
+                                Rp {pkg.originalPrice.toLocaleString("id-ID")}
+                              </span>
+                              <span className="text-[9px] font-mono text-red-500 font-bold bg-red-500/10 px-1 py-0.2 rounded">
+                                -{discount}%
+                              </span>
+                            </div>
+                          )}
+                          <div className="font-mono text-2xl font-extrabold golden-text">
+                            Rp {pkg.price.toLocaleString("id-ID")}
+                          </div>
+                          <span className="text-[10px] text-muted font-mono block mt-0.5">
+                            {pkg.deliveryTime} • {pkg.revisionCount}
+                          </span>
+                        </div>
+
+                        {featList.length > 0 && (
+                          <ul className="space-y-1.5 pt-2 border-t border-border/50 text-xs">
+                            {featList.slice(0, 4).map((f, i) => (
+                              <li key={i} className="text-foreground flex items-center gap-2 text-[11px]">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                                <span className="line-clamp-1">{f}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+
+                      <div className="pt-4 mt-4 border-t border-border/50">
+                        <a
+                          href={whatsappUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full py-2.5 px-3 rounded-lg text-xs font-mono uppercase font-bold flex items-center justify-center gap-1.5 btn-primary shadow-sm cursor-pointer"
+                        >
+                          <span>Pesan Paket</span>
+                          <ArrowIcon className="w-3.5 h-3.5" />
+                        </a>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="text-center pt-2">
+                <Link
+                  href="/services"
+                  className="text-xs font-mono text-primary font-bold hover:underline inline-flex items-center gap-1"
+                >
+                  <span>Lihat Semua Paket & Layanan Lengkap</span>
+                  <ArrowIcon className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+          )}
 
           {/* Consultation CTA Banner */}
           <div className="p-8 sm:p-12 bg-gradient-to-r from-card via-surface to-card border border-border rounded-2xl flex flex-col lg:flex-row items-center justify-between gap-8 custom-shadow">

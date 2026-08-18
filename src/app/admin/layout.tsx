@@ -31,6 +31,7 @@ export default function AdminLayout({
     { name: "Dashboard", href: "/admin", icon: <LayoutDashboard className="w-5 h-5" /> },
     { name: "Orders", href: "/admin/orders", icon: <ShoppingCart className="w-5 h-5" /> },
     { name: "Products", href: "/admin/products", icon: <Package className="w-5 h-5" /> },
+    { name: "Paket Layanan", href: "/admin/packages", icon: <Layers className="w-5 h-5" /> },
     { name: "Portfolio", href: "/admin/projects", icon: <Briefcase className="w-5 h-5" /> },
     { name: "Analytics", href: "/admin/analytics", icon: <BarChart className="w-5 h-5" /> },
     { name: "Settings", href: "/admin/settings", icon: <Settings className="w-5 h-5" /> },

@@ -65,6 +65,22 @@ export default async function Home() {
     console.error("Failed to fetch services:", e);
   }
 
+  // 6. Fetch development packages from database
+  let packages: any[] = [];
+  try {
+    packages = await prisma.developmentPackage.findMany({
+      where: { published: true },
+      take: 3,
+      orderBy: [
+        { isPopular: "desc" },
+        { order: "asc" },
+        { createdAt: "desc" }
+      ],
+    });
+  } catch (e) {
+    console.error("Failed to fetch development packages:", e);
+  }
+
   return (
     <HomeClient
       products={products}
@@ -72,6 +88,7 @@ export default async function Home() {
       featuredProject={featuredProject}
       projects={projects}
       services={services}
+      packages={packages}
       settings={settings}
     />
   );
