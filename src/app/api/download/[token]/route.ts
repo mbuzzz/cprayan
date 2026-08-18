@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-
-// This is a secure endpoint that generates a time-limited download URL
-// In a real production setup, this would return an AWS S3 Presigned URL.
-// For now, it returns a direct file path if verification passes.
+import { consumeRateLimit } from '@/lib/rate-limit';
 
 export async function GET(
   request: NextRequest,
@@ -14,10 +11,13 @@ export async function GET(
   const { token } = await params;
   
   try {
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown';
+    if (!consumeRateLimit(`download:ip:${ip}`, 20, 15 * 60 * 1000)) {
+      return NextResponse.json({ error: 'Terlalu banyak permintaan download. Silakan coba lagi nanti.' }, { status: 429 });
+    }
+
     const session = await getServerSession(authOptions);
     
-    // In some cases, downloads are allowed without login if the token is valid,
-    // but enforcing session is safer for digital products.
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized. Please login first.' }, { status: 401 });
     }

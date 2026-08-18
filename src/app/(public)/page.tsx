@@ -1,12 +1,11 @@
 import Link from "next/link";
-import Image from "next/image";
-import { ArrowRight, Star, ShoppingBag, Code, ShieldCheck, Zap, Layers, Sparkles, ExternalLink } from "lucide-react";
+import { ArrowRight, Star, ShoppingBag, Layers } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
 export const revalidate = 0;
 
 export default async function Home() {
-  // Fetch site settings
+  // 1. Fetch site settings directly from database
   let settings: { key: string; value: string }[] = [];
   try {
     settings = await prisma.siteSetting.findMany();
@@ -22,115 +21,69 @@ export default async function Home() {
   const heroTitle = getSetting("hero_title", "BUILD. BUY. GROW.");
   const heroSubtitle = getSetting(
     "hero_subtitle",
-    "Premium digital products and bespoke engineering for ambitious brands. A unified ecosystem for creation and scale."
+    "PT. Rayan Smart Kreatif menghadirkan solusi teknologi enterprise, dari pengembangan sistem kustom hingga aset produk digital premium untuk mempercepat proyek Anda."
   );
 
-  // Fetch featured products
-  let featuredProductsRaw: any[] = [];
+  // 2. Fetch real products from database
+  let products: any[] = [];
   try {
-    featuredProductsRaw = await prisma.product.findMany({
+    products = await prisma.product.findMany({
       where: { published: true },
       include: { category: true },
-      take: 4,
+      take: 8,
       orderBy: { createdAt: "desc" },
     });
   } catch (e) {
     console.error("Failed to fetch products:", e);
   }
 
-  // Default fallback products if database is fresh
-  const fallbackProducts = [
-    {
-      id: "demo-1",
-      title: "Rayan Commerce",
-      slug: "rayan-commerce",
-      price: 49,
-      badge: "Bestseller",
-      type: "UI KIT",
-      tech: "Figma + React",
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800&auto=format&fit=crop",
-    },
-    {
-      id: "demo-2",
-      title: "Rayan SaaS Dashboard",
-      slug: "rayan-saas",
-      price: 69,
-      badge: "New",
-      type: "TEMPLATE",
-      tech: "React + Tailwind",
-      rating: 5.0,
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop",
-    },
-    {
-      id: "demo-3",
-      title: "Rayan Mobile Pro",
-      slug: "rayan-mobile",
-      price: 59,
-      badge: "Popular",
-      type: "APP KIT",
-      tech: "Flutter / React Native",
-      rating: 4.8,
-      image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=800&auto=format&fit=crop",
-    },
-    {
-      id: "demo-4",
-      title: "Rayan Admin Suite",
-      slug: "rayan-admin",
-      price: 89,
-      badge: "Enterprise",
-      type: "SYSTEM",
-      tech: "Next.js + Prisma",
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?q=80&w=800&auto=format&fit=crop",
-    },
-  ];
-
-  const displayProducts =
-    featuredProductsRaw.length > 0
-      ? featuredProductsRaw.map((p, idx) => {
-          let images: string[] = [];
-          try {
-            if (p.screenshots) images = JSON.parse(p.screenshots as string);
-          } catch (e) {}
-          return {
-            id: p.id,
-            title: p.title,
-            slug: p.slug,
-            price: p.price,
-            badge: idx === 0 ? "Bestseller" : idx === 1 ? "New" : undefined,
-            type: p.category?.name?.toUpperCase() || "DIGITAL ASSET",
-            tech: p.category?.name || "Full Stack",
-            rating: 4.9,
-            image: images[0] || fallbackProducts[idx % fallbackProducts.length].image,
-          };
-        })
-      : fallbackProducts;
-
-  // Fetch featured projects
-  let featuredProjectsRaw: any[] = [];
+  // 3. Fetch real categories from database
+  let categories: any[] = [];
   try {
-    featuredProjectsRaw = await prisma.project.findMany({
-      where: { published: true },
-      take: 1,
+    categories = await prisma.category.findMany({
+      take: 8,
+      orderBy: { name: "asc" },
+    });
+  } catch (e) {
+    console.error("Failed to fetch categories:", e);
+  }
+
+  // 4. Fetch featured project from database
+  let featuredProject: any = null;
+  try {
+    featuredProject = await prisma.project.findFirst({
+      where: { published: true, featured: true },
       orderBy: { createdAt: "desc" },
     });
-  } catch (e) {}
+    if (!featuredProject) {
+      featuredProject = await prisma.project.findFirst({
+        where: { published: true },
+        orderBy: { createdAt: "desc" },
+      });
+    }
+  } catch (e) {
+    console.error("Failed to fetch featured project:", e);
+  }
 
-  const featuredProject =
-    featuredProjectsRaw.length > 0
-      ? {
-          title: featuredProjectsRaw[0].title,
-          slug: featuredProjectsRaw[0].slug,
-          description: featuredProjectsRaw[0].description,
-          image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop",
-        }
-      : {
-          title: "Nexus Architecture",
-          slug: "nexus-arch",
-          description: "Minimalist portfolio and digital ecosystem for world-class architectural studio.",
-          image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop",
-        };
+  let projectScreenshots: string[] = [];
+  if (featuredProject?.screenshots) {
+    try {
+      projectScreenshots = JSON.parse(featuredProject.screenshots);
+    } catch (e) {}
+  }
+  const featuredProjectImage = projectScreenshots[0] || "/asset/logorayan.png";
+
+  // 5. Fetch real services from database
+  let services: any[] = [];
+  try {
+    services = await prisma.service.findMany({
+      where: { published: true },
+      take: 4,
+      orderBy: { order: "asc" },
+    });
+  } catch (e) {
+    console.error("Failed to fetch services:", e);
+  }
 
   return (
     <div className="flex flex-col bg-[#080808] text-[#e3e2e2] selection:bg-[#f2ca50] selection:text-[#3c2f00]">
@@ -143,9 +96,17 @@ export default async function Home() {
           </div>
 
           <h1 className="font-heading text-5xl sm:text-7xl lg:text-[5.25rem] font-extrabold tracking-tight leading-[0.95] text-[#e3e2e2]">
-            BUILD.<br />
-            BUY.<br />
-            <span className="text-[#f2ca50]">GROW.</span>
+            {heroTitle.includes(" ") ? (
+              <>
+                {heroTitle.split(" ").slice(0, 2).join(" ")}
+                <br />
+                <span className="text-[#f2ca50]">
+                  {heroTitle.split(" ").slice(2).join(" ") || "GROW."}
+                </span>
+              </>
+            ) : (
+              <span className="text-[#f2ca50]">{heroTitle}</span>
+            )}
           </h1>
 
           <p className="text-base sm:text-lg text-[#d0c5af] max-w-lg leading-relaxed font-normal">
@@ -169,24 +130,41 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* Hero Showcase Image */}
+        {/* Hero Showcase */}
         <div className="lg:col-span-6 relative mt-8 lg:mt-0">
-          <div className="aspect-[16/11] w-full relative group overflow-hidden border border-[#4d4635]/40 bg-[#121414]">
-            <img
-              src={featuredProject.image}
-              alt={featuredProject.title}
-              className="w-full h-full object-cover grayscale opacity-85 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
-            />
-            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#080808]/90 via-[#080808]/60 to-transparent border-t border-[#4d4635]/20">
-              <span className="font-mono text-[11px] uppercase tracking-widest text-[#f2ca50] mb-1 block">
-                01 / FEATURED SHOWCASE
-              </span>
-              <h3 className="font-heading text-xl sm:text-2xl font-bold text-white">
-                {featuredProject.title}
+          {featuredProject ? (
+            <Link
+              href={`/projects/${featuredProject.slug}`}
+              className="aspect-[16/11] w-full block relative group overflow-hidden border border-[#4d4635]/40 bg-[#121414]"
+            >
+              <img
+                src={featuredProjectImage}
+                alt={featuredProject.title}
+                className="w-full h-full object-cover grayscale opacity-85 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+              />
+              <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#080808]/95 via-[#080808]/70 to-transparent border-t border-[#4d4635]/20">
+                <span className="font-mono text-[11px] uppercase tracking-widest text-[#f2ca50] mb-1 block">
+                  01 / FEATURED SHOWCASE
+                </span>
+                <h3 className="font-heading text-xl sm:text-2xl font-bold text-white group-hover:text-[#f2ca50] transition-colors">
+                  {featuredProject.title}
+                </h3>
+                <p className="text-xs text-[#d0c5af] mt-1 line-clamp-1">
+                  {featuredProject.description}
+                </p>
+              </div>
+            </Link>
+          ) : (
+            <div className="aspect-[16/11] w-full flex flex-col items-center justify-center border border-[#4d4635]/40 bg-[#121414] p-8 text-center">
+              <Layers className="w-12 h-12 text-[#f2ca50] mb-4 opacity-80" />
+              <h3 className="font-heading text-lg font-bold text-white mb-2">
+                Bespoke Digital Portfolio
               </h3>
-              <p className="text-xs text-[#d0c5af] mt-1 line-clamp-1">{featuredProject.description}</p>
+              <p className="text-xs text-[#d0c5af] max-w-sm">
+                Lihat portofolio proyek dan solusi enterprise kustom yang telah kami kembangkan.
+              </p>
             </div>
-          </div>
+          )}
         </div>
       </section>
 
@@ -204,75 +182,83 @@ export default async function Home() {
 
           {/* Category Filter Bar */}
           <div className="flex justify-start md:justify-center gap-6 border-b border-[#4d4635]/30 pb-4 overflow-x-auto whitespace-nowrap text-xs uppercase tracking-widest font-mono">
-            <Link href="/products" className="text-[#f2ca50] border-b-2 border-[#f2ca50] pb-4 -mb-[18px] font-bold">
+            <Link
+              href="/products"
+              className="text-[#f2ca50] border-b-2 border-[#f2ca50] pb-4 -mb-[18px] font-bold"
+            >
               All
             </Link>
-            <Link href="/products?cat=web" className="text-[#d0c5af] hover:text-[#f2ca50] transition-colors pb-4">
-              Web
-            </Link>
-            <Link href="/products?cat=mobile" className="text-[#d0c5af] hover:text-[#f2ca50] transition-colors pb-4">
-              Mobile
-            </Link>
-            <Link href="/products?cat=uikit" className="text-[#d0c5af] hover:text-[#f2ca50] transition-colors pb-4">
-              UI Kits
-            </Link>
-            <Link href="/products?cat=saas" className="text-[#d0c5af] hover:text-[#f2ca50] transition-colors pb-4">
-              SaaS
-            </Link>
-            <Link href="/products?cat=admin" className="text-[#d0c5af] hover:text-[#f2ca50] transition-colors pb-4">
-              Admin
-            </Link>
-            <Link href="/products?cat=ecommerce" className="text-[#d0c5af] hover:text-[#f2ca50] transition-colors pb-4">
-              E-Commerce
-            </Link>
-            <Link href="/products?cat=plugins" className="text-[#d0c5af] hover:text-[#f2ca50] transition-colors pb-4">
-              Plugins
-            </Link>
-          </div>
-
-          {/* Product Grid (4-Column) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 pt-4">
-            {displayProducts.map((product) => (
+            {categories.map((cat) => (
               <Link
-                key={product.id}
-                href={`/products/${product.slug}`}
-                className="group flex flex-col bg-[#1b1c1c] border border-[#4d4635]/30 hover:border-[#f2ca50]/70 transition-all duration-300 p-3.5"
+                key={cat.id}
+                href={`/products?category=${cat.slug}`}
+                className="text-[#d0c5af] hover:text-[#f2ca50] transition-colors pb-4"
               >
-                <div className="aspect-[4/3] bg-[#292a2a] overflow-hidden relative mb-4 border border-[#4d4635]/20">
-                  <img
-                    src={product.image}
-                    alt={product.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  {product.badge && (
-                    <div className="absolute top-2.5 left-2.5 bg-[#f2ca50] text-[#080808] px-2 py-0.5 font-mono text-[9px] uppercase font-bold tracking-wider">
-                      {product.badge}
-                    </div>
-                  )}
-                  <div className="absolute top-2.5 right-2.5 bg-[#080808]/90 text-[#e3e2e2] border border-[#4d4635]/30 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider">
-                    {product.type}
-                  </div>
-                </div>
-
-                <div className="flex justify-between items-start mb-1.5">
-                  <h3 className="font-heading font-semibold text-base text-[#e3e2e2] group-hover:text-[#f2ca50] transition-colors line-clamp-1">
-                    {product.title}
-                  </h3>
-                  <span className="font-mono font-bold text-sm text-[#f2ca50] ml-2 flex-shrink-0">
-                    Rp {Number(product.price).toLocaleString("id-ID")}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between text-xs text-[#858585] mt-auto pt-2 border-t border-[#4d4635]/20">
-                  <span className="font-mono text-[10px] text-[#d0c5af]">{product.tech}</span>
-                  <div className="flex items-center gap-1 text-[#f2ca50]">
-                    <Star className="w-3 h-3 fill-current" />
-                    <span className="font-mono text-[11px] text-[#e3e2e2]">{product.rating}</span>
-                  </div>
-                </div>
+                {cat.name}
               </Link>
             ))}
           </div>
+
+          {/* Product Grid */}
+          {products.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 pt-4">
+              {products.map((product) => {
+                let screenshots: string[] = [];
+                try {
+                  if (product.screenshots) screenshots = JSON.parse(product.screenshots);
+                } catch (e) {}
+                const productImage = screenshots[0] || "/asset/logorayan.png";
+
+                return (
+                  <Link
+                    key={product.id}
+                    href={`/products/${product.slug}`}
+                    className="group flex flex-col bg-[#1b1c1c] border border-[#4d4635]/30 hover:border-[#f2ca50]/70 transition-all duration-300 p-3.5"
+                  >
+                    <div className="aspect-[4/3] bg-[#292a2a] overflow-hidden relative mb-4 border border-[#4d4635]/20">
+                      <img
+                        src={productImage}
+                        alt={product.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      {product.featured && (
+                        <div className="absolute top-2.5 left-2.5 bg-[#f2ca50] text-[#080808] px-2 py-0.5 font-mono text-[9px] uppercase font-bold tracking-wider">
+                          Featured
+                        </div>
+                      )}
+                      <div className="absolute top-2.5 right-2.5 bg-[#080808]/90 text-[#e3e2e2] border border-[#4d4635]/30 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider">
+                        {product.category?.name || "ASSET"}
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between items-start mb-1.5">
+                      <h3 className="font-heading font-semibold text-base text-[#e3e2e2] group-hover:text-[#f2ca50] transition-colors line-clamp-1">
+                        {product.title}
+                      </h3>
+                      <span className="font-mono font-bold text-sm text-[#f2ca50] ml-2 flex-shrink-0">
+                        Rp {Number(product.price).toLocaleString("id-ID")}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs text-[#858585] mt-auto pt-2 border-t border-[#4d4635]/20">
+                      <span className="font-mono text-[10px] text-[#d0c5af]">
+                        {product.version ? `v${product.version}` : product.category?.name || "Ready"}
+                      </span>
+                      <div className="flex items-center gap-1 text-[#f2ca50]">
+                        <Star className="w-3 h-3 fill-current" />
+                        <span className="font-mono text-[11px] text-[#e3e2e2]">5.0</span>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-12 text-[#858585] border border-[#4d4635]/20 p-8">
+              <ShoppingBag className="w-12 h-12 text-[#f2ca50] mx-auto mb-3 opacity-60" />
+              <p className="text-sm">Belum ada produk yang dipublikasikan.</p>
+            </div>
+          )}
 
           <div className="flex justify-center pt-6">
             <Link
@@ -286,7 +272,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 3. FIND WHAT YOU'RE BUILDING (Bento Cards) */}
+      {/* 3. FIND WHAT YOU'RE BUILDING (Category Bento Cards) */}
       <section className="border-t border-[#4d4635]/30 py-20 px-4 sm:px-8">
         <div className="max-w-7xl mx-auto space-y-12">
           <div className="space-y-3">
@@ -297,76 +283,31 @@ export default async function Home() {
               Find what you're building.
             </h2>
             <p className="text-sm text-[#d0c5af]">
-              Browse our curated collections to find the perfect starting point.
+              Browse our categories to find the perfect foundation for your project.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Card 1 */}
-            <Link
-              href="/products?cat=ecommerce"
-              className="bg-[#121414] border border-[#4d4635]/30 p-6 sm:p-8 hover:border-[#f2ca50] transition-colors group flex flex-col justify-between space-y-6"
-            >
-              <div>
-                <h3 className="font-heading text-xl font-bold text-[#e3e2e2] group-hover:text-[#f2ca50] transition-colors mb-2">
-                  E-Commerce Systems
-                </h3>
-                <p className="text-xs text-[#d0c5af] leading-relaxed">
-                  High-conversion storefronts, inventory management, payment gateways, and admin panels.
-                </p>
-              </div>
-              <div className="aspect-video bg-[#1f2020] border border-[#4d4635]/20 overflow-hidden">
-                <img
-                  src="https://images.unsplash.com/photo-1556742049-0a67e55722c0?q=80&w=600&auto=format&fit=crop"
-                  alt="E-Commerce"
-                  className="w-full h-full object-cover grayscale opacity-75 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
-                />
-              </div>
-            </Link>
-
-            {/* Card 2 */}
-            <Link
-              href="/products?cat=saas"
-              className="bg-[#121414] border border-[#4d4635]/30 p-6 sm:p-8 hover:border-[#f2ca50] transition-colors group flex flex-col justify-between space-y-6"
-            >
-              <div>
-                <h3 className="font-heading text-xl font-bold text-[#e3e2e2] group-hover:text-[#f2ca50] transition-colors mb-2">
-                  SaaS & Dashboards
-                </h3>
-                <p className="text-xs text-[#d0c5af] leading-relaxed">
-                  Real-time data visualization, analytics pipelines, role-based access, and subscriptions.
-                </p>
-              </div>
-              <div className="aspect-video bg-[#1f2020] border border-[#4d4635]/20 overflow-hidden">
-                <img
-                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=600&auto=format&fit=crop"
-                  alt="SaaS"
-                  className="w-full h-full object-cover grayscale opacity-75 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
-                />
-              </div>
-            </Link>
-
-            {/* Card 3 */}
-            <Link
-              href="/products?cat=corporate"
-              className="bg-[#121414] border border-[#4d4635]/30 p-6 sm:p-8 hover:border-[#f2ca50] transition-colors group flex flex-col justify-between space-y-6"
-            >
-              <div>
-                <h3 className="font-heading text-xl font-bold text-[#e3e2e2] group-hover:text-[#f2ca50] transition-colors mb-2">
-                  Corporate Portals
-                </h3>
-                <p className="text-xs text-[#d0c5af] leading-relaxed">
-                  High-impact brand showcases, enterprise digital headquarters, and editorial platforms.
-                </p>
-              </div>
-              <div className="aspect-video bg-[#1f2020] border border-[#4d4635]/20 overflow-hidden">
-                <img
-                  src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600&auto=format&fit=crop"
-                  alt="Corporate"
-                  className="w-full h-full object-cover grayscale opacity-75 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
-                />
-              </div>
-            </Link>
+            {categories.slice(0, 3).map((category, idx) => (
+              <Link
+                key={category.id}
+                href={`/products?category=${category.slug}`}
+                className="bg-[#121414] border border-[#4d4635]/30 p-6 sm:p-8 hover:border-[#f2ca50] transition-colors group flex flex-col justify-between space-y-6"
+              >
+                <div>
+                  <h3 className="font-heading text-xl font-bold text-[#e3e2e2] group-hover:text-[#f2ca50] transition-colors mb-2">
+                    {category.name}
+                  </h3>
+                  <p className="text-xs text-[#d0c5af] leading-relaxed">
+                    {category.description || "Koleksi aset dan template berkualitas tinggi siap pakai."}
+                  </p>
+                </div>
+                <div className="border-t border-[#4d4635]/20 pt-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-wider text-[#f2ca50]">
+                  <span>Explore Collection</span>
+                  <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
@@ -411,28 +352,49 @@ export default async function Home() {
               Need something custom?
             </h2>
             <p className="text-sm sm:text-base text-[#d0c5af] leading-relaxed">
-              We partner with visionary founders and established enterprises to engineer bespoke digital products, tailored AI solutions, and scalable web architectures.
+              Kami bermitra dengan bisnis dan enterprise untuk merancang serta mengembangkan sistem kustom, arsitektur cloud, dan solusi web berskala tinggi.
             </p>
             <div className="pt-2">
               <Link
                 href="/services"
                 className="inline-block px-8 py-3.5 border border-[#f2ca50] text-[#f2ca50] font-mono text-xs uppercase tracking-widest hover:bg-[#f2ca50] hover:text-[#080808] transition-all font-semibold"
               >
-                View Agency Work
+                View Agency Services
               </Link>
             </div>
           </div>
 
           <div className="lg:col-span-7">
-            <div className="aspect-[16/10] bg-[#121414] border border-[#4d4635]/40 overflow-hidden relative group">
-              <img
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop"
-                alt="Bespoke Agency Solutions"
-                className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
-              />
-              <div className="absolute bottom-4 left-4 bg-[#080808]/90 border border-[#4d4635]/30 px-4 py-2 font-mono text-xs text-[#f2ca50]">
-                Tailored Architecture • Custom Full-Stack
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {services.map((svc) => {
+                let features: string[] = [];
+                try {
+                  if (svc.features) features = JSON.parse(svc.features);
+                } catch (e) {}
+                return (
+                  <div
+                    key={svc.id}
+                    className="p-6 bg-[#121414] border border-[#4d4635]/30 hover:border-[#f2ca50]/60 transition-colors"
+                  >
+                    <h3 className="font-heading font-bold text-lg text-white mb-2">{svc.title}</h3>
+                    <p className="text-xs text-[#d0c5af] mb-4 leading-relaxed line-clamp-3">
+                      {svc.description}
+                    </p>
+                    {features.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5">
+                        {features.slice(0, 3).map((f, i) => (
+                          <span
+                            key={i}
+                            className="font-mono text-[9px] uppercase px-2 py-0.5 bg-[#1f2020] text-[#f2ca50] border border-[#4d4635]/20"
+                          >
+                            {f}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -451,8 +413,7 @@ export default async function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative">
-            {/* Step 1 */}
-            <div className="space-y-4 relative">
+            <div className="space-y-4">
               <div className="w-14 h-14 bg-[#080808] border border-[#f2ca50] text-[#f2ca50] flex items-center justify-center font-heading text-2xl font-bold">
                 1
               </div>
@@ -462,8 +423,7 @@ export default async function Home() {
               </p>
             </div>
 
-            {/* Step 2 */}
-            <div className="space-y-4 relative">
+            <div className="space-y-4">
               <div className="w-14 h-14 bg-[#080808] border border-[#f2ca50] text-[#f2ca50] flex items-center justify-center font-heading text-2xl font-bold">
                 2
               </div>
@@ -473,8 +433,7 @@ export default async function Home() {
               </p>
             </div>
 
-            {/* Step 3 */}
-            <div className="space-y-4 relative">
+            <div className="space-y-4">
               <div className="w-14 h-14 bg-[#080808] border border-[#f2ca50] text-[#f2ca50] flex items-center justify-center font-heading text-2xl font-bold">
                 3
               </div>
@@ -484,8 +443,7 @@ export default async function Home() {
               </p>
             </div>
 
-            {/* Step 4 */}
-            <div className="space-y-4 relative">
+            <div className="space-y-4">
               <div className="w-14 h-14 bg-[#080808] border border-[#f2ca50] text-[#f2ca50] flex items-center justify-center font-heading text-2xl font-bold">
                 4
               </div>
@@ -508,7 +466,7 @@ export default async function Home() {
             Become a Creator
           </h2>
           <p className="text-sm sm:text-base text-[#d0c5af] max-w-xl mx-auto leading-relaxed">
-            Join our curated marketplace and monetize your high-quality digital assets, UI kits, and templates with thousands of developers.
+            Bergabunglah dengan marketplace kurasi kami dan jual produk digital, template, serta script berkualitas tinggi Anda.
           </p>
           <div className="pt-2">
             <Link
@@ -523,7 +481,6 @@ export default async function Home() {
 
       {/* 8. FINAL DUAL SPLIT CTA */}
       <section className="grid grid-cols-1 md:grid-cols-2 border-t border-[#4d4635]/30 min-h-[40vh]">
-        {/* Split Left: Shop Products */}
         <Link
           href="/products"
           className="bg-[#080808] hover:bg-[#121414] transition-colors duration-500 flex flex-col justify-center items-center text-center p-12 sm:p-20 border-b md:border-b-0 md:border-r border-[#4d4635]/30 group cursor-pointer"
@@ -540,7 +497,6 @@ export default async function Home() {
           </span>
         </Link>
 
-        {/* Split Right: Custom Service */}
         <Link
           href="/contact"
           className="bg-[#121414] hover:bg-[#080808] transition-colors duration-500 flex flex-col justify-center items-center text-center p-12 sm:p-20 group cursor-pointer"
