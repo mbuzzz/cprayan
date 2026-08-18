@@ -137,10 +137,10 @@ export default function Navbar() {
             </Link>
           )}
 
-          {/* Start a Project CTA Button (Auto-hidden when logged in) */}
+          {/* Get Started CTA Button (Auto-hidden when logged in, directs to /register) */}
           {!session && (
             <Link
-              href="/contact"
+              href="/register"
               className="hidden md:inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-on-primary font-bold text-xs uppercase tracking-wider hover:opacity-90 transition-all rounded shadow-sm whitespace-nowrap"
             >
               <Sparkles className="w-3.5 h-3.5" />
@@ -213,7 +213,7 @@ export default function Navbar() {
                 </Link>
 
                 <Link
-                  href="/contact"
+                  href="/register"
                   onClick={() => setIsOpen(false)}
                   className="w-full text-center py-2.5 bg-primary text-on-primary text-xs uppercase tracking-widest font-bold hover:opacity-90 transition-all rounded shadow flex items-center justify-center gap-2"
                 >

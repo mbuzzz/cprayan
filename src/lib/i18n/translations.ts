@@ -105,7 +105,7 @@ export const translations: Record<Language, Translations> = {
       work: "Portofolio",
       about: "Tentang Kami",
       contact: "Kontak",
-      startProject: "Mulai Proyek",
+      startProject: "Get Started",
       login: "Masuk",
       logout: "Keluar",
       dashboard: "Dasbor",
