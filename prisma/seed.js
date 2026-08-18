@@ -29,7 +29,8 @@ async function main() {
     { name: 'Fonts', slug: 'fonts', description: 'Premium Fonts & Typography' },
     { name: 'Graphics', slug: 'graphics', description: 'Vectors, Illustrations, Images' },
     { name: 'Audio', slug: 'audio', description: 'Music tracks and sound effects' },
-    { name: 'Web Themes', slug: 'web-themes', description: 'Website Themes & Templates' }
+    { name: 'Web Themes', slug: 'web-themes', description: 'Website Themes & Templates' },
+    { name: 'AI & Subscription', slug: 'ai-subscription', description: 'Produk AI, cloud storage, dan langganan digital.' }
   ];
 
   const createdCategories = {};
@@ -40,6 +41,10 @@ async function main() {
       create: cat
     });
   }
+
+  await prisma.product.deleteMany({
+    where: { slug: { in: ['rayan-pos-system', 'corporate-pitch-deck', 'luxuria-serif-font', 'cinematic-epic-trailer', 'cyberpunk-vector-pack'] } }
+  });
 
   // 3. Create Products
   const posSystem = await prisma.product.upsert({
@@ -115,6 +120,30 @@ async function main() {
       screenshots: JSON.stringify(["/asset/logorayan.png"]),
       featured: false,
     }
+  });
+
+  await prisma.product.upsert({
+    where: { slug: 'gemini-ai-pro-18-bulan-invite-family' },
+    update: {
+      categoryId: createdCategories['ai-subscription'].id,
+      description: 'Dapatkan paket Google AI lengkap: Google Drive 5 TB, Google AI Plus Plan, akses Veo, Gemini Pro, dan Google Flow AI Credits 1.000 per bulan. Durasi akses 18 bulan dengan garansi 1 bulan.',
+      content: '<p>Paket Google AI Pro melalui Invite Family dengan benefit lengkap selama 18 bulan.</p><ul><li>Google Drive 5 TB</li><li>Google AI Plus Plan</li><li>Akses Veo</li><li>Akses Gemini Pro</li><li>Google Flow AI Credits 1.000 per bulan</li><li>Durasi 18 bulan</li><li>Garansi 1 bulan</li></ul><p>Detail aktivasi dikirim ke email buyer setelah pembayaran diverifikasi.</p>',
+      license: 'Invite Family · Garansi 1 Bulan',
+      screenshots: JSON.stringify(['/asset/gemini-ai-pro.png']),
+    },
+    create: {
+      title: 'Gemini AI Pro 18 Bulan Invite Family',
+      slug: 'gemini-ai-pro-18-bulan-invite-family',
+      description: 'Dapatkan paket Google AI lengkap: Google Drive 5 TB, Google AI Plus Plan, akses Veo, Gemini Pro, dan Google Flow AI Credits 1.000 per bulan. Durasi akses 18 bulan dengan garansi 1 bulan.',
+      content: '<p>Paket Google AI Pro melalui Invite Family dengan benefit lengkap selama 18 bulan.</p><ul><li>Google Drive 5 TB</li><li>Google AI Plus Plan</li><li>Akses Veo</li><li>Akses Gemini Pro</li><li>Google Flow AI Credits 1.000 per bulan</li><li>Durasi 18 bulan</li><li>Garansi 1 bulan</li></ul><p>Detail aktivasi dikirim ke email buyer setelah pembayaran diverifikasi.</p>',
+      price: 50000,
+      version: '18 bulan',
+      license: 'Invite Family · Garansi 1 Bulan',
+      categoryId: createdCategories['ai-subscription'].id,
+      screenshots: JSON.stringify(['/asset/gemini-ai-pro.png']),
+      featured: true,
+      published: true,
+    },
   });
 
   // 4. Create Projects (Portfolio)
