@@ -12,20 +12,20 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12">
         {/* Brand & Studio Info */}
         <div className="md:col-span-5 space-y-6">
-          <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3 group inline-block">
             <div className="relative w-8 h-8 flex-shrink-0">
               <Image
                 src="/asset/logorayan.png"
                 alt="PT. Rayan Smart Kreatif"
                 fill
                 sizes="32px"
-                className="object-contain filter brightness-110"
+                className="object-contain filter brightness-110 group-hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <span className="font-heading font-bold text-lg text-foreground tracking-tight">
+            <span className="font-heading font-bold text-lg text-foreground tracking-tight group-hover:text-primary transition-colors">
               PT. Rayan Smart Kreatif
             </span>
-          </div>
+          </Link>
           <p className="text-sm text-muted max-w-sm leading-relaxed">
             {t.footer.description}
           </p>
@@ -34,43 +34,43 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Navigation Links */}
+        {/* Navigation Links with Hover Slide */}
         <div className="md:col-span-3 md:col-start-7 space-y-4">
-          <h4 className="font-mono text-xs uppercase tracking-widest text-primary font-semibold">
+          <h4 className="font-mono text-xs uppercase tracking-widest text-primary font-bold">
             {t.footer.quickLinks}
           </h4>
           <ul className="flex flex-col space-y-2.5 text-sm">
             <li>
-              <Link href="/products" className="text-muted hover:text-primary transition-colors">
+              <Link href="/products" className="inline-block text-muted hover:text-primary hover:translate-x-1.5 rtl:hover:-translate-x-1.5 transition-all duration-200">
                 {t.nav.products}
               </Link>
             </li>
             <li>
-              <Link href="/services" className="text-muted hover:text-primary transition-colors">
+              <Link href="/services" className="inline-block text-muted hover:text-primary hover:translate-x-1.5 rtl:hover:-translate-x-1.5 transition-all duration-200">
                 {t.nav.services}
               </Link>
             </li>
             <li>
-              <Link href="/projects" className="text-muted hover:text-primary transition-colors">
+              <Link href="/projects" className="inline-block text-muted hover:text-primary hover:translate-x-1.5 rtl:hover:-translate-x-1.5 transition-all duration-200">
                 {t.nav.work}
               </Link>
             </li>
             <li>
-              <Link href="/about" className="text-muted hover:text-primary transition-colors">
+              <Link href="/about" className="inline-block text-muted hover:text-primary hover:translate-x-1.5 rtl:hover:-translate-x-1.5 transition-all duration-200">
                 {t.nav.about}
               </Link>
             </li>
             <li>
-              <Link href="/contact" className="text-muted hover:text-primary transition-colors">
+              <Link href="/contact" className="inline-block text-muted hover:text-primary hover:translate-x-1.5 rtl:hover:-translate-x-1.5 transition-all duration-200">
                 {t.nav.contact}
               </Link>
             </li>
           </ul>
         </div>
 
-        {/* Social */}
+        {/* Social Links with Hover Slide */}
         <div className="md:col-span-3 space-y-4">
-          <h4 className="font-mono text-xs uppercase tracking-widest text-primary font-semibold">
+          <h4 className="font-mono text-xs uppercase tracking-widest text-primary font-bold">
             {t.footer.contactTitle}
           </h4>
           <ul className="flex flex-col space-y-2.5 text-sm">
@@ -79,7 +79,7 @@ export default function Footer() {
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted hover:text-primary transition-colors"
+                className="inline-block text-muted hover:text-primary hover:translate-x-1.5 rtl:hover:-translate-x-1.5 transition-all duration-200"
               >
                 GitHub
               </a>
@@ -89,7 +89,7 @@ export default function Footer() {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted hover:text-primary transition-colors"
+                className="inline-block text-muted hover:text-primary hover:translate-x-1.5 rtl:hover:-translate-x-1.5 transition-all duration-200"
               >
                 LinkedIn
               </a>
@@ -99,7 +99,7 @@ export default function Footer() {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted hover:text-primary transition-colors"
+                className="inline-block text-muted hover:text-primary hover:translate-x-1.5 rtl:hover:-translate-x-1.5 transition-all duration-200"
               >
                 Instagram
               </a>
