@@ -1,41 +1,69 @@
 @import "tailwindcss";
 
 :root {
-  /* Default Light Mode Variables */
-  --background: #FAFAFA;
-  --foreground: #111827;
-  --primary: #C6A15B;
-  --primary-foreground: #FFFFFF;
-  --muted: #6B7280;
-  --card: #FFFFFF;
-  --card-border: #E5E7EB;
-  --border: #E5E7EB;
+  /* Aureum Precision - Dark Theme System */
+  --background: #080808;
+  --foreground: #e3e2e2;
+  --surface: #121414;
+  --surface-dim: #121414;
+  --surface-bright: #383939;
+  --surface-container-lowest: #080808;
+  --surface-container-low: #1b1c1c;
+  --surface-container: #1f2020;
+  --surface-container-high: #292a2a;
+  --surface-container-highest: #343535;
+  --on-surface: #e3e2e2;
+  --on-surface-variant: #d0c5af;
+  --outline: #99907c;
+  --outline-variant: #4d4635;
+  --primary: #f2ca50;
+  --primary-gold: #d4af37;
+  --on-primary: #3c2f00;
+  --primary-container: #d4af37;
+  --secondary: #d1c6a4;
+  --secondary-container: #4e472c;
+  --muted: #858585;
+  --card: #121414;
+  --card-border: rgba(77, 70, 53, 0.35);
+  --border: rgba(77, 70, 53, 0.25);
 }
 
 .dark {
-  /* Dark Mode Variables */
-  --background: #121415;
-  --foreground: #FFFFFF;
-  --primary: #C6A15B;
-  --primary-foreground: #121415;
-  --muted: #A0A0A0;
-  --card: #1E2022;
-  --card-border: rgba(198, 161, 91, 0.15);
-  --border: rgba(255, 255, 255, 0.05);
+  --background: #080808;
+  --foreground: #e3e2e2;
+  --surface: #121414;
+  --primary: #f2ca50;
+  --card: #121414;
+  --card-border: rgba(77, 70, 53, 0.35);
+  --border: rgba(77, 70, 53, 0.25);
 }
 
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-dim: var(--surface-dim);
+  --color-surface-bright: var(--surface-bright);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
   --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-gold: var(--primary-gold);
+  --color-on-primary: var(--on-primary);
+  --color-secondary: var(--secondary);
   --color-muted: var(--muted);
   --color-card: var(--card);
   --color-card-border: var(--card-border);
   --color-border: var(--border);
-  
+
   --font-sans: var(--font-inter);
-  --font-heading: var(--font-oswald);
+  --font-sora: var(--font-sora);
+  --font-heading: var(--font-sora);
 }
 
 body {
@@ -47,13 +75,14 @@ body {
 
 /* Base Styles */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading), sans-serif;
-  text-transform: uppercase;
+  font-family: var(--font-sora), sans-serif;
+  letter-spacing: -0.02em;
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(198, 161, 91, 0.5);
+  border-color: #d4af37;
+  box-shadow: 0 0 0 1px #d4af37;
 }
 
 /* Utilities */

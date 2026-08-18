@@ -34,6 +34,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# prisma dev db (if you don't want to commit the initial db)
-# prisma/dev.db
-# prisma/dev.db-journal
+# prisma dev db
+dev.db
+*.db
+*.db-journal
+prisma/dev.db
+prisma/dev.db-journal
+prisma/prisma/
+.env.production

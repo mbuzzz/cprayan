@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Oswald } from "next/font/google";
+import { Inter, Sora } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -10,16 +10,17 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-const oswald = Oswald({
-  variable: "--font-oswald",
+const sora = Sora({
+  variable: "--font-sora",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "PT. Rayan Smart Kreatif | Solusi Digital Cerdas untuk Bisnis Anda",
-  description: "Premium Digital Agency & Marketplace",
+  title: "PT. Rayan Smart Kreatif - Build. Buy. Grow.",
+  description: "Premium digital products and bespoke engineering for ambitious brands. A unified ecosystem for creation and scale.",
 };
 
 export default function RootLayout({
@@ -28,9 +29,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" suppressHydrationWarning>
+    <html lang="id" className="dark" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${oswald.variable} antialiased min-h-screen flex flex-col`}
+        className={`${inter.variable} ${sora.variable} font-sans bg-background text-on-background antialiased min-h-screen flex flex-col selection:bg-primary selection:text-on-primary`}
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <AuthProvider>
