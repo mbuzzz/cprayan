@@ -20,6 +20,7 @@ export default function ProductForm({ categories, initialData }: { categories: a
     description: initialData?.description || "",
     content: initialData?.content || "",
     price: initialData?.price?.toString() || "0",
+    originalPrice: initialData?.originalPrice?.toString() || "",
     categoryId: initialData?.categoryId || (categories.length > 0 ? categories[0].id : ""),
     version: initialData?.version || "1.0.0",
     license: initialData?.license || "",
@@ -128,12 +129,24 @@ export default function ProductForm({ categories, initialData }: { categories: a
               />
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1">Harga (Rp) *</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Harga Jual (Rp) *</label>
                 <input 
                   type="number" name="price" required value={formData.price} onChange={handleChange} min="0"
                   className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:border-primary transition-colors font-mono" 
+                  placeholder="0"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1 flex items-center justify-between">
+                  <span>Harga Coret</span>
+                  <span className="text-[10px] text-muted font-normal">(Opsional)</span>
+                </label>
+                <input 
+                  type="number" name="originalPrice" value={formData.originalPrice} onChange={handleChange} min="0"
+                  className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:border-primary transition-colors font-mono" 
+                  placeholder="Misal: 150000"
                 />
               </div>
               <div>

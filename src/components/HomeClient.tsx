@@ -177,15 +177,27 @@ export default function HomeClient({
                         </h3>
                       </div>
                       <div className="flex items-center justify-between pt-2 border-t border-border/40">
-                        <span className="font-mono text-sm sm:text-base font-bold text-foreground group-hover:text-primary transition-colors">
-                          {product.price > 0
-                            ? new Intl.NumberFormat("id-ID", {
-                                style: "currency",
-                                currency: "IDR",
-                                maximumFractionDigits: 0,
-                              }).format(product.price)
-                            : "FREE"}
-                        </span>
+                        <div>
+                          {product.originalPrice && product.originalPrice > product.price && (
+                            <div className="flex items-center gap-1.5 mb-0.5">
+                              <span className="line-through text-muted text-[10px] font-mono">
+                                Rp {product.originalPrice.toLocaleString('id-ID')}
+                              </span>
+                              <span className="text-[9px] font-mono text-red-500 font-bold bg-red-500/10 px-1 rounded">
+                                -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
+                              </span>
+                            </div>
+                          )}
+                          <span className="font-mono text-sm sm:text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                            {product.price > 0
+                              ? new Intl.NumberFormat("id-ID", {
+                                  style: "currency",
+                                  currency: "IDR",
+                                  maximumFractionDigits: 0,
+                                }).format(product.price)
+                              : "FREE"}
+                          </span>
+                        </div>
                         <span className="font-mono text-[11px] uppercase tracking-wider text-primary group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform flex items-center gap-1 font-semibold">
                           <span>{t.marketplace.ready}</span>
                           <ArrowIcon className="w-3.5 h-3.5" />

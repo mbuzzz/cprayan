@@ -104,9 +104,10 @@ model Product {
   slug        String    @unique
   description String
   content     String?
-  price       Float     @default(0)
-  version     String?
-  license     String?
+  price         Float     @default(0)
+  originalPrice Float?
+  version       String?
+  license       String?
   releaseDate DateTime?
   filePath    String?
   featured    Boolean   @default(false)

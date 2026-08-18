@@ -7,6 +7,34 @@ import AddToCartButton from "@/components/AddToCartButton";
 
 export const revalidate = 0;
 
+interface ProductItem {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  content: string | null;
+  price: number;
+  originalPrice?: number | null;
+  version?: string | null;
+  license?: string | null;
+  releaseDate?: Date | null;
+  filePath?: string | null;
+  featured: boolean;
+  published: boolean;
+  screenshots: string;
+  demoLinks?: string | null;
+  categoryId?: string | null;
+  category?: {
+    id: string;
+    name: string;
+    slug: string;
+    description?: string | null;
+  } | null;
+  _count: {
+    orderItems: number;
+  };
+}
+
 export default async function ProductsPage({
   searchParams,
 }: {
@@ -47,7 +75,7 @@ export default async function ProductsPage({
       orderBy: orderByClause,
       skip,
       take: limit,
-    }),
+    }) as Promise<ProductItem[]>,
     prisma.product.count({ where: whereClause }),
     prisma.category.findMany({ orderBy: { name: "asc" } })
   ]);
@@ -245,13 +273,16 @@ export default async function ProductsPage({
                     
                     {/* Content Box */}
                     <div className="p-5 flex-1 flex flex-col justify-between space-y-4 border-t border-border group-hover:border-primary/30 transition-colors">
-                      <div className="space-y-1.5">
+                      <div className="space-y-2">
                         <div className="flex items-center justify-between text-xs text-muted">
-                          <span className="flex items-center gap-1 font-mono text-[10px] text-green-500 font-semibold">
-                            <CheckCircle className="w-3 h-3" /> By Rayan Studio
-                          </span>
+                          <Link 
+                            href={`/products?category=${product.category?.slug || ""}`} 
+                            className="font-mono text-[10px] uppercase tracking-wider text-muted hover:text-primary transition-colors"
+                          >
+                            {product.categoryName}
+                          </Link>
                           {product.license && (
-                            <span className="flex items-center gap-1 text-[10px] font-mono text-primary truncate max-w-[120px]">
+                            <span className="flex items-center gap-1 text-[10px] font-mono text-primary truncate max-w-[140px] bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-md">
                               <ShieldCheck className="w-3 h-3 flex-shrink-0" />
                               <span className="truncate">{product.license}</span>
                             </span>
@@ -267,20 +298,33 @@ export default async function ProductsPage({
                       
                       {/* Price & Actions */}
                       <div className="pt-3 border-t border-border/50 space-y-3">
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-end justify-between">
                           <div className="flex items-center gap-1 text-xs">
                             <Star className="w-3.5 h-3.5 text-primary fill-primary" />
                             <span className="font-bold text-foreground">5.0</span>
                             <span className="text-[10px] text-muted font-mono">({product._count.orderItems} sales)</span>
                           </div>
-                          <div className="font-mono font-bold text-base golden-text">
-                            {product.price > 0
-                              ? new Intl.NumberFormat("id-ID", {
-                                  style: "currency",
-                                  currency: "IDR",
-                                  maximumFractionDigits: 0,
-                                }).format(product.price)
-                              : "FREE"}
+                          
+                          <div className="text-right space-y-0.5">
+                            {product.originalPrice && product.originalPrice > product.price && (
+                              <div className="flex items-center justify-end gap-1.5">
+                                <span className="line-through text-muted text-[11px] font-mono">
+                                  Rp {product.originalPrice.toLocaleString('id-ID')}
+                                </span>
+                                <span className="text-[10px] font-mono text-red-500 font-bold bg-red-500/10 px-1 py-0.2 rounded">
+                                  -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
+                                </span>
+                              </div>
+                            )}
+                            <div className="font-mono font-bold text-base golden-text">
+                              {product.price > 0
+                                ? new Intl.NumberFormat("id-ID", {
+                                    style: "currency",
+                                    currency: "IDR",
+                                    maximumFractionDigits: 0,
+                                  }).format(product.price)
+                                : "FREE"}
+                            </div>
                           </div>
                         </div>
 
@@ -292,7 +336,7 @@ export default async function ProductsPage({
                             Detail
                           </Link>
                           <div className="flex-1">
-                            <AddToCartButton product={product} />
+                            <AddToCartButton product={product} variant="card" />
                           </div>
                         </div>
                       </div>
