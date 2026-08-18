@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { consumeRateLimit } from "@/lib/rate-limit";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as any,
@@ -13,13 +14,19 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+      async authorize(credentials, req) {
+        const email = credentials?.email?.trim().toLowerCase();
+        const requestHeaders = req.headers || {};
+        const ip = requestHeaders["x-forwarded-for"]?.split(",")[0]?.trim() || requestHeaders["x-real-ip"] || "unknown";
+        if (!consumeRateLimit(`login:ip:${ip}`, 10, 15 * 60 * 1000) || (email && !consumeRateLimit(`login:email:${email}`, 10, 15 * 60 * 1000))) {
+          throw new Error("Too many attempts");
+        }
+        if (!email || !credentials?.password || credentials.password.length > 128) {
           throw new Error("Invalid credentials");
         }
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email }
+          where: { email }
         });
 
         if (!user || !user.password) {
@@ -67,7 +74,7 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
     newUser: "/register",
   },
-  secret: process.env.NEXTAUTH_SECRET || "rayansmartkreatif-secret-key-2024",
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);

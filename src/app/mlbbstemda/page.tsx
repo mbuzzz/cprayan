@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSession } from "next-auth/react";
 
 type Team = { id: string; name: string };
 type Match = { id: string; round: number; slot: number; a: Team | null; b: Team | null; scoreA: number | null; scoreB: number | null; winner: string | null };
@@ -29,10 +30,10 @@ function advance(state: State): State {
 
 export default function MlbbStemdaPage() {
   const [state, setState] = useState<State | null>(null);
-  const [admin, setAdmin] = useState(false);
-  const [pin, setPin] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const { data: session } = useSession();
+  const admin = (session?.user as { role?: string } | undefined)?.role === "ADMIN";
 
   useEffect(() => { fetch("/api/mlbbstemda").then(r => r.json()).then(data => { setState(data.matches?.length ? data : createInitial()); setLoading(false); }).catch(() => { setState(createInitial()); setLoading(false); }); }, []);
   const currentRound = useMemo(() => state ? Math.max(...state.rounds) : 1, [state]);
@@ -44,11 +45,11 @@ export default function MlbbStemdaPage() {
   async function save(next: State) {
     setState(next);
     if (!admin) return;
-    const response = await fetch("/api/mlbbstemda", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ pin, state: next }) });
+    const response = await fetch("/api/mlbbstemda", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ state: next }) });
     setMessage(response.ok ? "Skor tersimpan • pemenang otomatis masuk babak berikutnya" : "Gagal menyimpan skor");
   }
   function updateScore(id: string, side: "a" | "b", value: string) {
-    if (!state || pin !== "244345") return;
+    if (!state || !admin) return;
     const next = { ...state, matches: state.matches.map(m => m.id === id ? { ...m, [side === "a" ? "scoreA" : "scoreB"]: value === "" ? null : Math.max(0, Number(value)) } : m) };
     const match = next.matches.find(m => m.id === id)!;
     if (match.scoreA !== null && match.scoreB !== null && match.scoreA !== match.scoreB) match.winner = match.scoreA > match.scoreB ? match.a?.id ?? null : match.b?.id ?? null; else match.winner = null;
@@ -58,8 +59,8 @@ export default function MlbbStemdaPage() {
   if (loading || !state) return <main className="mlbb-page"><p>Memuat bagan pertandingan...</p></main>;
 
   return <main className="mlbb-page">
-    <div className="mlbb-topbar"><div><span className="mlbb-kicker">HUT RI // STEMDA ESPORTS // 2026</span><h1>Battle of <b>Mobile Legends</b></h1><p>SMKS Muhammadiyah 2 Genteng • Bagan kelas X & XI • {teams.length} tim</p></div><div className="mlbb-actions"><button className="outline" onClick={() => window.print()}>Cetak A4</button>{!admin ? <button className="admin" onClick={() => setAdmin(true)}>Admin</button> : <button className="admin" onClick={() => setAdmin(false)}>Keluar Admin</button>}</div></div>
-    {admin && <section className="admin-panel"><label>PIN ADMIN <input inputMode="numeric" type="password" value={pin} onChange={e => setPin(e.target.value)} placeholder="Masukkan PIN" /></label><button className="admin" onClick={() => setMessage(pin === "244345" ? "Mode admin aktif" : "PIN salah")}>Buka akses</button><button className="outline" onClick={reset}>Acak ulang</button><span>{message}</span></section>}
+    <div className="mlbb-topbar"><div><span className="mlbb-kicker">HUT RI // STEMDA ESPORTS // 2026</span><h1>Battle of <b>Mobile Legends</b></h1><p>SMKS Muhammadiyah 2 Genteng • Bagan kelas X & XI • {teams.length} tim</p></div><div className="mlbb-actions"><button className="outline" onClick={() => window.print()}>Cetak A4</button></div></div>
+    {admin && <section className="admin-panel"><button className="outline" onClick={reset}>Acak ulang</button><span>{message}</span></section>}
     <section className="hero-strip"><div><span className="round-label">BABAK BERJALAN</span><strong>{currentRound === 1 ? "BABAK PENYISIHAN" : `BABAK ${currentRound}`}</strong></div><div className="hero-note">Update skor pertandingan, pemenang langsung naik ke babak selanjutnya.</div></section>
     <section className="bracket"><div className="bracket-head"><h2>Bracket pertandingan</h2><span>Jalur kiri & kanan menuju Grand Final • skor hanya bisa diubah admin</span></div><div className="bracket-bracket"><div className="bracket-side left-side">{[1, 2, 3, 4, 5].map(round => { const all = getRoundMatches(round); const split = Math.ceil(roundSizes[round - 1] / 2); return renderRound(round, all.slice(0, split), "left"); })}</div><div className="bracket-center">{renderRound(6, getRoundMatches(6), "left")}<div className="trophy">HUT RI<br /><b>GRAND FINAL</b></div></div><div className="bracket-side right-side">{[5, 4, 3, 2, 1].map(round => { const all = getRoundMatches(round); const split = Math.ceil(roundSizes[round - 1] / 2); return renderRound(round, all.slice(split), "right"); })}</div></div></section>
     <footer><span>STEMDA • FAIR PLAY • GGWP</span><span>gumpla.web.id/mlbbstemda</span></footer>

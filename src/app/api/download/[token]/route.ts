@@ -9,7 +9,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ) {
   const { token } = await params;
   
@@ -67,7 +67,11 @@ export async function GET(
       });
     }
 
-    return NextResponse.redirect(new URL(mockFilePath, request.url));
+    const fileUrl = new URL(mockFilePath, request.url);
+    if (fileUrl.origin !== new URL(request.url).origin || !["http:", "https:"].includes(fileUrl.protocol)) {
+      return NextResponse.json({ error: "Download URL tidak valid." }, { status: 500 });
+    }
+    return NextResponse.redirect(fileUrl);
 
   } catch (error) {
     console.error("Download error:", error);

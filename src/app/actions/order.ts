@@ -3,9 +3,22 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import crypto from "crypto";
+import { requireAdmin } from "@/lib/require-admin";
+
+function customerInput(data: { name: string; email: string; phone: string }) {
+  const name = typeof data.name === "string" ? data.name.trim() : "";
+  const email = typeof data.email === "string" ? data.email.trim().toLowerCase() : "";
+  const phone = typeof data.phone === "string" ? data.phone.trim() : "";
+  if (name.length < 2 || name.length > 120 || /[<>]/.test(name)) throw new Error("Nama customer tidak valid");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) throw new Error("Email customer tidak valid");
+  if (!/^[0-9+()\-\s]{8,30}$/.test(phone)) throw new Error("Nomor telepon tidak valid");
+  return { name, email, phone };
+}
 
 export async function createDirectOrder(productId: string, customerData: { name: string, email: string, phone: string }) {
   try {
+    if (!/^[a-zA-Z0-9_-]{1,100}$/.test(productId)) throw new Error("Product tidak valid");
+    const customer = customerInput(customerData);
     const product = await prisma.product.findUnique({ where: { id: productId } });
     if (!product) throw new Error("Product not found");
 
@@ -21,9 +34,9 @@ export async function createDirectOrder(productId: string, customerData: { name:
       data: {
         orderNumber,
         referenceNumber,
-        customerName: customerData.name,
-        customerEmail: customerData.email,
-        customerPhone: customerData.phone,
+        customerName: customer.name,
+        customerEmail: customer.email,
+        customerPhone: customer.phone,
         subtotal: product.price,
         tax,
         total,
@@ -50,6 +63,7 @@ export async function createDirectOrder(productId: string, customerData: { name:
 }
 
 export async function verifyOrder(orderId: string) {
+  if (!await requireAdmin()) return { success: false, error: "Unauthorized" };
   try {
     await prisma.order.update({
       where: { id: orderId },
@@ -78,6 +92,7 @@ export async function verifyOrder(orderId: string) {
 }
 
 export async function completeOrder(orderId: string) {
+  if (!await requireAdmin()) return { success: false, error: "Unauthorized" };
   try {
     await prisma.order.update({
       where: { id: orderId },
@@ -92,6 +107,7 @@ export async function completeOrder(orderId: string) {
 }
 
 export async function cancelOrder(orderId: string) {
+  if (!await requireAdmin()) return { success: false, error: "Unauthorized" };
   try {
     await prisma.order.update({
       where: { id: orderId },

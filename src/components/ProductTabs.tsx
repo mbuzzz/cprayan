@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { sanitizeRichText } from "@/lib/sanitize-html";
 import { Check, FileCode, Star } from "lucide-react";
 import ReviewForm from "@/components/ReviewForm";
 
@@ -45,7 +46,7 @@ export default function ProductTabs({ product, reviews }: { product: any, review
               {product.description}
             </p>
             {product.content && (
-              <div dangerouslySetInnerHTML={{ __html: product.content }} className="text-muted leading-relaxed mt-4" />
+              <div dangerouslySetInnerHTML={{ __html: sanitizeRichText(product.content) }} className="text-muted leading-relaxed mt-4" />
             )}
 
             <h4 className="text-lg font-bold mt-8 mb-4 text-foreground">Fitur Utama</h4>

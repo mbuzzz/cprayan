@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, Globe, PlayCircle } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { sanitizeRichText } from "@/lib/sanitize-html";
 import { notFound } from "next/navigation";
 
 export const revalidate = 0;
@@ -80,7 +81,7 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
             <div className="prose prose-invert max-w-none mb-12">
               <h2 className="text-3xl font-bold text-foreground mb-6">Tentang Project Ini</h2>
               {project.content ? (
-                <div dangerouslySetInnerHTML={{ __html: project.content }} className="text-muted leading-relaxed whitespace-pre-line text-lg" />
+                <div dangerouslySetInnerHTML={{ __html: sanitizeRichText(project.content) }} className="text-muted leading-relaxed whitespace-pre-line text-lg" />
               ) : (
                 <p className="text-muted leading-relaxed text-lg mb-6">
                   {project.description}
