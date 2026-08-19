@@ -4,12 +4,17 @@ import PackageListClient from "./PackageListClient";
 export const revalidate = 0;
 
 export default async function AdminPackagesPage() {
-  const packages = await prisma.developmentPackage.findMany({
-    orderBy: [
-      { order: "asc" },
-      { createdAt: "desc" },
-    ],
-  });
+  let packages: Awaited<ReturnType<typeof prisma.developmentPackage.findMany>> = [];
+  try {
+    packages = await prisma.developmentPackage.findMany({
+      orderBy: [
+        { order: "asc" },
+        { createdAt: "desc" },
+      ],
+    });
+  } catch (error) {
+    console.error("Failed to fetch admin development packages:", error);
+  }
 
   return <PackageListClient initialPackages={packages} />;
 }

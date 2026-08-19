@@ -30,20 +30,30 @@ const iconMap: Record<string, React.ReactNode> = {
 };
 
 export default async function ServicesPage() {
-  const [dbServices, dbPackages] = await Promise.all([
-    prisma.service.findMany({
+  let dbServices: Awaited<ReturnType<typeof prisma.service.findMany>> = [];
+  let dbPackages: Awaited<ReturnType<typeof prisma.developmentPackage.findMany>> = [];
+
+  try {
+    dbServices = await prisma.service.findMany({
       where: { published: true },
       orderBy: { order: "asc" },
-    }),
-    prisma.developmentPackage.findMany({
+    });
+  } catch (error) {
+    console.error("Failed to fetch services:", error);
+  }
+
+  try {
+    dbPackages = await prisma.developmentPackage.findMany({
       where: { published: true },
       orderBy: [
         { isPopular: "desc" },
         { order: "asc" },
         { createdAt: "desc" },
       ],
-    }),
-  ]);
+    });
+  } catch (error) {
+    console.error("Failed to fetch development packages:", error);
+  }
 
   const services = dbServices.map((s) => {
     let features: string[] = [];
