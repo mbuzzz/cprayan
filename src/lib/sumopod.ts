@@ -67,7 +67,13 @@ export async function createSumopodPayment(params: CreatePaymentParams): Promise
 
     // Extract relevant payment fields from Sumopod response
     const paymentId = data.data?.id || data.payment_id || data.id || params.orderId;
-    const paymentUrl = data.data?.payment_url || data.payment_url || data.checkout_url || data.redirect_url;
+    const paymentUrl =
+      data.data?.payment_url ||
+      data.data?.payment_link_url ||
+      data.payment_url ||
+      data.payment_link_url ||
+      data.checkout_url ||
+      data.redirect_url;
     const qrCodeUrl = data.data?.qr_code_url || data.qr_code_url || data.qr_image;
     const qrString = data.data?.qr_string || data.qr_string;
 
