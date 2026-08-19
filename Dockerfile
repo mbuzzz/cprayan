@@ -23,7 +23,14 @@ RUN adduser --system --uid 1001 nextjs
 RUN mkdir -p prisma
 RUN chown -R nextjs:nodejs prisma
 
-COPY --from=builder /app/public ./public
+COPY --chown=nextjs:nodejs --from=builder /app/public ./public
+
+# Upload endpoint writes user files to public/uploads.
+# Keep the static public directory read-only in practice, but make the
+# upload subdirectory writable by the non-root application user.
+RUN mkdir -p public/uploads \
+    && chown -R nextjs:nodejs public/uploads \
+    && chmod 775 public/uploads
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
