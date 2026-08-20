@@ -2,9 +2,11 @@ import { prisma } from "@/lib/prisma";
 import ProductForm from "../../create/ProductForm";
 import { notFound } from "next/navigation";
 
-export default async function AdminEditProductPage({ params }: { params: { id: string } }) {
+export default async function AdminEditProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+
   const [product, categories] = await Promise.all([
-    prisma.product.findUnique({ where: { id: params.id } }),
+    prisma.product.findUnique({ where: { id } }),
     prisma.category.findMany({ orderBy: { name: 'asc' } })
   ]);
 
