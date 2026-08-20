@@ -25,7 +25,6 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/asset/logorayan.png", type: "image/png" },
-      { url: "/favicon.ico" },
     ],
     shortcut: ["/asset/logorayan.png"],
     apple: [
