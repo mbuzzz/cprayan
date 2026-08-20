@@ -147,7 +147,7 @@ export default function HomeClient({
               {products.slice(0, 8).map((product) => {
                 let images: string[] = [];
                 try {
-                  if (product.images) images = JSON.parse(product.images);
+                  if (product.screenshots) images = JSON.parse(product.screenshots);
                 } catch (e) {}
                 const mainImage = images[0] || "/asset/logorayan.png";
 
@@ -160,7 +160,7 @@ export default function HomeClient({
                     <div className="aspect-[4/3] bg-background relative overflow-hidden flex items-center justify-center p-4">
                       <img
                         src={mainImage}
-                        alt={product.name}
+                        alt={product.title}
                         className="max-h-full max-w-full object-contain filter group-hover:scale-110 transition-transform duration-500"
                       />
                       {product.featured && (
@@ -175,7 +175,7 @@ export default function HomeClient({
                           {product.category?.name || "Digital Asset"}
                         </span>
                         <h3 className="font-heading font-bold text-sm sm:text-base text-foreground group-hover:text-primary transition-colors line-clamp-1 mt-1">
-                          {product.name}
+                          {product.title}
                         </h3>
                       </div>
                       <div className="flex items-center justify-between pt-2 border-t border-border/40">
