@@ -49,6 +49,17 @@ export default function ProductForm({ categories, initialData }: { categories: a
     setFormData(prev => ({ ...prev, [name]: checked }));
   };
 
+  const makeFeaturedImage = (index: number) => {
+    try {
+      const images = JSON.parse(formData.screenshots) as string[];
+      if (!Array.isArray(images) || index <= 0 || index >= images.length) return;
+      const [selected] = images.splice(index, 1);
+      setFormData(prev => ({ ...prev, screenshots: JSON.stringify([selected, ...images]) }));
+    } catch {
+      setError("Daftar gambar produk tidak valid.");
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -210,7 +221,8 @@ export default function ProductForm({ categories, initialData }: { categories: a
                 accept="image/*"
                 value={formData.screenshots}
                 onChange={(val) => setFormData(prev => ({ ...prev, screenshots: val }))}
-                helperText="Upload gambar tangkapan layar produk (gambar pertama akan menjadi cover katalog)."
+                onMakeFeatured={makeFeaturedImage}
+                helperText="Upload gambar tangkapan layar produk (gambar pertama akan menjadi featured image katalog)."
               />
             </div>
 

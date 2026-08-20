@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { UploadCloud, X, File, Image as ImageIcon, Loader2, Plus } from "lucide-react";
+import { UploadCloud, X, File, Image as ImageIcon, Loader2, Star } from "lucide-react";
 
 interface FileUploadProps {
   value: string; // JSON array string e.g. '["/uploads/1.png"]' or single URL string
@@ -10,6 +10,7 @@ interface FileUploadProps {
   accept?: string;
   label?: string;
   helperText?: string;
+  onMakeFeatured?: (index: number) => void;
 }
 
 export default function FileUpload({
@@ -19,6 +20,7 @@ export default function FileUpload({
   accept = "image/*",
   label = "Upload File",
   helperText = "Drag & drop file di sini atau klik untuk memilih.",
+  onMakeFeatured,
 }: FileUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -175,7 +177,7 @@ export default function FileUpload({
                     <img src={url} alt={`Upload ${idx + 1}`} className="w-full h-full object-contain" />
                     {idx === 0 && multiple && (
                       <span className="absolute top-1 left-1 bg-[#f2ca50] text-[#080808] text-[9px] font-mono font-bold px-1.5 py-0.5 rounded">
-                        Cover
+                        Featured Image
                       </span>
                     )}
                   </div>
@@ -204,6 +206,25 @@ export default function FileUpload({
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </div>
+
+                {multiple && isImageFile(url) && onMakeFeatured && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onMakeFeatured(idx);
+                    }}
+                    disabled={idx === 0}
+                    className={`mt-2 inline-flex items-center justify-center gap-1 rounded border px-2 py-1 text-[10px] font-mono transition-colors ${
+                      idx === 0
+                        ? "cursor-default border-[#f2ca50]/40 bg-[#f2ca50]/10 text-[#f2ca50]"
+                        : "border-[#4d4635]/50 text-[#d0c5af] hover:border-[#f2ca50] hover:text-[#f2ca50]"
+                    }`}
+                  >
+                    <Star className={`h-3 w-3 ${idx === 0 ? "fill-current" : ""}`} />
+                    {idx === 0 ? "Featured Image" : "Jadikan Featured Image"}
+                  </button>
+                )}
               </div>
             ))}
           </div>
